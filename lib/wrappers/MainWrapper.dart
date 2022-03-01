@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/screens/mainpages/DailyTallyPage.dart';
+import 'package:quick_store/screens/mainpages/InventoryPage.dart';
+import 'package:quick_store/screens/mainpages/ScanPage.dart';
 // import 'package:barcode_scan2/barcode_scan2.dart';
 // import 'package:quick_store/components/AccountSuspended.dart';
 // import 'package:quick_store/components/Loading.dart';
@@ -28,70 +31,6 @@ class MainWrapper extends StatefulWidget {
 class _MainWrapperState extends State<MainWrapper> {
   int _currentIndex = 0;
   List<Page> pages;
-  bool isGlobalImporting = false;
-  int taskLength = 0;
-  int taskIndex = 0;
-  // List<AppTask> tasks = [AppTask(heading: 'Initializing', content: '')];
-
-  // void globalImportLoadingHandler(bool status) {
-  //   setState(() {
-  //     if(!status) {
-  //       taskIndex = 0;
-  //       tasks = [AppTask(heading: 'Initializing', content: '')];
-  //     }
-  //     isGlobalImporting = status;
-  //
-  //     pages[0] = Page(
-  //         DataPage(
-  //           globalImportLoadingHandler: globalImportLoadingHandler,
-  //           initializeTaskList: initializeTaskList,
-  //           incrementLoading: incrementLoading,
-  //           isGlobalImporting: isGlobalImporting,
-  //           taskLength: taskLength,
-  //           taskIndex: taskIndex,
-  //           tasks: tasks,
-  //         ),
-  //         BottomNavigationBarItem(
-  //           label: 'Data',
-  //           icon: Icon(Icons.archive_rounded),
-  //         ),
-  //         1
-  //     );
-  //   });
-  // }
-  //
-  // void initializeTaskList(List<AppTask> tasks) {
-  //   setState(() {
-  //     this.tasks = tasks;
-  //   });
-  // }
-  //
-  // void incrementLoading() {
-  //   setState(() {
-  //     taskIndex++;
-  //     pages[0] = Page(
-  //         DataPage(
-  //           globalImportLoadingHandler: globalImportLoadingHandler,
-  //           initializeTaskList: initializeTaskList,
-  //           incrementLoading: incrementLoading,
-  //           isGlobalImporting: isGlobalImporting,
-  //           taskLength: taskLength,
-  //           taskIndex: taskIndex,
-  //           tasks: tasks,
-  //         ),
-  //         BottomNavigationBarItem(
-  //           label: 'Data',
-  //           icon: Icon(Icons.archive_rounded),
-  //         ),
-  //         1
-  //     );
-  //   });
-  // }
-  //
-  // Future<String> scanCode() async {
-  //   var result = await BarcodeScanner.scan();
-  //   return result.rawContent;
-  // }
 
   String getAccountType(bool isAnon, String type) {
     if (isAnon)
@@ -103,103 +42,30 @@ class _MainWrapperState extends State<MainWrapper> {
     return 'ADMIN';
   }
 
-  List<Widget> getPages(String accountType) {
-    if(accountType == 'GUESS')
-      return pages
-          .where((page) => page.accessLevel <= 1)
-          .map((page) => page.page)
-          .toList();
-    if(accountType == 'EMPLOYEE')
-      return pages
-          .where((page) => page.accessLevel <= 2)
-          .map((page) => page.page)
-          .toList();
-    if(accountType == 'ADMIN')
-      return pages
-          .where((page) => page.accessLevel <= 3)
-          .map((page) => page.page)
-          .toList();
-    return [];
-  }
-
-  List<BottomNavigationBarItem> getTabs(String accountType) {
-    if(accountType == 'GUESS')
-      return pages
-          .where((page) => page.accessLevel <= 1)
-          .map((page) => page.tab)
-          .toList();
-    if(accountType == 'EMPLOYEE')
-      return pages
-          .where((page) => page.accessLevel <= 2)
-          .map((page) => page.tab)
-          .toList();
-    if(accountType == 'ADMIN')
-      return pages
-          .where((page) => page.accessLevel <= 3)
-          .map((page) => page.tab)
-          .toList();
-    return [];
-  }
-
   @override
   void initState() {
     pages = [
-      // Page(
-      //     DataPage(
-      //       globalImportLoadingHandler: globalImportLoadingHandler,
-      //       initializeTaskList: initializeTaskList,
-      //       incrementLoading: incrementLoading,
-      //       isGlobalImporting: isGlobalImporting,
-      //       taskLength: taskLength,
-      //       taskIndex: taskIndex,
-      //       tasks: tasks,
-      //     ),
-      //     BottomNavigationBarItem(
-      //       label: 'Data',
-      //       icon: Icon(Icons.archive_rounded),
-      //     ),
-      //     1
-      // ),
-      // Page(
-      //     InventoryLocalPage(),
-      //     BottomNavigationBarItem(
-      //       label: 'Local',
-      //       icon: Icon(Icons.sd_card_rounded),
-      //     ),
-      //     1
-      // ),
-      // Page(
-      //     InventoryGlobalPage(),
-      //     BottomNavigationBarItem(
-      //       label: 'Global',
-      //       icon: Icon(Icons.storage_rounded),
-      //     ),
-      //     2
-      // ),
-      // Page(
-      //     AccountPage(),
-      //     BottomNavigationBarItem(
-      //       label: 'Accounts',
-      //       icon: Icon(Icons.group_rounded),
-      //     ),
-      //     3
-      // ),
-      // Page(
-      //     widget.account.isAnon ? GuessProfilePage() : ProfilePage(),
-      //     BottomNavigationBarItem(
-      //       label: 'Profile',
-      //       icon: Icon(Icons.account_circle_rounded),
-      //     ),
-      //     1
-      // ),
-      // Page(
-      //     widget.account.isAnon ? GuessHelpPage() : HelpPage(),
-      //     BottomNavigationBarItem(
-      //       label: 'Help',
-      //       icon: Icon(Icons.help_rounded),
-      //     ),
-      //     1
-      // ),
+      Page(
+          InventoryPage(),
+          BottomNavigationBarItem(
+            label: 'Inventory',
+            icon: Icon(Icons.archive_rounded),
+          ),
+      ),
+      Page(
+          ScanPage(),
+          BottomNavigationBarItem(
+            label: 'Scan',
+            icon: Icon(Icons.qr_code_scanner_rounded),
+          ),
+      ),
+      Page(
+          DailyTallyPage(),
+          BottomNavigationBarItem(
+            label: 'Daily Tally',
+            icon: Icon(Icons.receipt_long_rounded),
+          ),
+      ),
     ];
     super.initState();
   }
@@ -207,47 +73,46 @@ class _MainWrapperState extends State<MainWrapper> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final mainPages = pages.map((page) => page.page).toList();
     // final account = widget.account.isAnon ? null : Provider.of<AccountData>(context);
 
-    return Container(
-      child: Text('Quick App'),
-    );
-    // return !widget.account.isAnon && account == null ? Loading('Loading Account Data') : Builder(
-    //   builder: (context) {
-    //     final pages = getPages(widget.account.isAnon ? 'GUESS' : account.accountType);
-    //     final tabs = getTabs(widget.account.isAnon ? 'GUESS' : account.accountType);
-    //
-    //     if(!widget.account.isAnon && !account.isVerified)
-    //       return AccountSuspended();
-    //
-    //     return GestureDetector(
-    //       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-    //       child: Scaffold(
-    //           bottomNavigationBar: BottomNavigationBar(
-    //             type: BottomNavigationBarType.fixed,
-    //             backgroundColor: theme.primaryColor,
-    //             selectedItemColor: Colors.white,
-    //             unselectedItemColor: Colors.white.withOpacity(.60),
-    //             selectedFontSize: 14,
-    //             unselectedFontSize: 14,
-    //             currentIndex: _currentIndex,
-    //             onTap: (value) => setState(() => _currentIndex = value),
-    //             items: tabs,
-    //           ),
-    //           body: Container(
-    //               child: pages[_currentIndex]
-    //           )
-    //       ),
-    //     );
-    //   },
+    // return Container(
+    //   child: Text('Quick App'),
     // );
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+      child: Scaffold(
+        backgroundColor: Color(0xFFE1DBDB),
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(icon: Icon(Icons.menu_rounded), onPressed: () {})
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: theme.primaryColor,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white.withOpacity(.60),
+          selectedFontSize: 14,
+          unselectedFontSize: 14,
+          currentIndex: _currentIndex,
+          onTap: (value) => setState(() => _currentIndex = value),
+          items: pages.map((page) => page.tab).toList(),
+        ),
+        body: Container(
+          constraints: BoxConstraints.expand(),
+            child: mainPages[_currentIndex]
+        )
+      ),
+    );
   }
 }
 
 class Page {
   Widget page;
   BottomNavigationBarItem tab;
-  int accessLevel;
 
-  Page(this.page, this.tab, this.accessLevel);
+  Page(this.page, this.tab);
 }

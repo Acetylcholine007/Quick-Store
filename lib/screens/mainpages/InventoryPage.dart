@@ -1,15 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/shared/decorations.dart';
 
-class ImventoryPage extends StatefulWidget {
-  const ImventoryPage({Key key}) : super(key: key);
+class InventoryPage extends StatefulWidget {
+  const InventoryPage({Key key}) : super(key: key);
 
   @override
-  _ImventoryPageState createState() => _ImventoryPageState();
+  _InventoryPageState createState() => _InventoryPageState();
 }
 
-class _ImventoryPageState extends State<ImventoryPage> {
+class _InventoryPageState extends State<InventoryPage> {
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final theme = Theme.of(context);
+    return Container(
+      padding: EdgeInsets.all(8),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Text(
+                'INVENTORY',
+                textAlign: TextAlign.left,
+                style: theme.textTheme.headline4
+            )
+          ),
+          Expanded(
+            flex: 1,
+            child: TextFormField(
+              controller: controller,
+              decoration: searchFieldDecoration.copyWith(
+                  suffixIcon: IconButton(onPressed: () {
+                    // controller.text = "";
+                    // widget.searchHandler("");
+                  }, icon: Icon(Icons.highlight_off_rounded))
+              ),
+              // onChanged: widget.searchHandler,
+            )
+          ),
+          Expanded(
+            flex: 10,
+            child: Text('Grid here'),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -9,12 +9,13 @@ import 'package:quick_store/services/AuthService.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-      MultiProvider(
-          providers: [
-            // StreamProvider<Account>.value(initialData: null, value: AuthService().user),
-          ],
-          child: MyApp()
-      )
+      // MultiProvider(
+      //     providers: [
+      //       // StreamProvider<Account>.value(initialData: null, value: AuthService().user),
+      //     ],
+      //     child: MyApp()
+      // )
+    MyApp()
   );
 }
 
@@ -22,10 +23,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MainWrapper();
+    return AuthWrapper();
   }
 }
-
-ThemeData appTheme = ThemeData(
-  primarySwatch: Colors.blue,
-);

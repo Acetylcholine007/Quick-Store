@@ -10,6 +10,20 @@ class FrontPage extends StatefulWidget {
 class _FrontPageState extends State<FrontPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Column(
+        children: [
+          Column(
+            children: [
+
+            ],
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            child: Text('Get Started')
+          )
+        ],
+      ),
+    );
   }
 }
