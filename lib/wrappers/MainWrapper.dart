@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/BLoCs/StoreBloc.dart';
+import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/screens/mainpages/DailyTallyPage.dart';
 import 'package:quick_store/screens/mainpages/InventoryPage.dart';
 import 'package:quick_store/screens/mainpages/ScanPage.dart';
@@ -20,9 +22,10 @@ import 'package:quick_store/screens/mainpages/ScanPage.dart';
 // import 'package:provider/provider.dart';
 //
 class MainWrapper extends StatefulWidget {
-  // final Account account;
-  //
-  // MainWrapper({this.account});
+  final StoreBloc bloc;
+  final LocalDBDataPack data;
+
+  MainWrapper({this.bloc, this.data});
 
   @override
   _MainWrapperState createState() => _MainWrapperState();
@@ -46,7 +49,7 @@ class _MainWrapperState extends State<MainWrapper> {
   void initState() {
     pages = [
       Page(
-          InventoryPage(),
+          InventoryPage(bloc: widget.bloc, data: widget.data),
           BottomNavigationBarItem(
             label: 'Inventory',
             icon: Icon(Icons.archive_rounded),

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/BLoCs/StoreBloc.dart';
+import 'package:quick_store/models/LocalDBDataPack.dart';
 
 class DailyTallyPage extends StatefulWidget {
-  const DailyTallyPage({Key key}) : super(key: key);
+  final StoreBloc bloc;
+  final LocalDBDataPack data;
+
+  const DailyTallyPage({Key key, this.bloc, this.data}) : super(key: key);
 
   @override
   _DailyTallyPageState createState() => _DailyTallyPageState();

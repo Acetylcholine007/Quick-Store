@@ -1,5 +1,5 @@
 class Order {
-  int oid;
+  String oid;
   String datetime;
   String itemString;
 

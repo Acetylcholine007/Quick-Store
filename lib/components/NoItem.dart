@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class NoItem extends StatelessWidget {
-  const NoItem({Key key}) : super(key: key);
+  final String label;
+  const NoItem({Key key, this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Text(label, style: theme.textTheme.headline4),
+    );
   }
 }

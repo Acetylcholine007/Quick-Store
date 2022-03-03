@@ -16,6 +16,7 @@ class StoreBloc {
 
   getStore() async {
     _storeController.sink.add(await LocalDatabaseService.db.getStore());
+    print('DONE>>>>>>>>>');
   }
 
   Future<Product> getProduct(String pid) async {

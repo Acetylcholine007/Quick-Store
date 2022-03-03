@@ -20,9 +20,9 @@ class LocalDatabaseService {
         onCreate: (db, version) {
           Batch batch = db.batch();
           batch.execute(
-              'CREATE TABLE products(pid INTEGER PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
+              'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
           );
-          batch.execute('CREATE TABLE orders(id INTEGER PRIMARY KEY, datetime TEXT, itemString TEXT)');
+          batch.execute('CREATE TABLE orders(id TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
           return batch.commit();
         },
         version: 1

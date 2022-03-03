@@ -1,11 +1,11 @@
 class Product {
-  int pid;
+  String pid;
   String name;
   double price;
   int quantity;
   String expiration;
 
-  Product({this.pid, this.name, this.price, this.quantity, this.expiration});
+  Product({this.pid, this.name = "", this.price = 0, this.quantity = 0, this.expiration = ""});
 
   Product.fromLocalDB (Map<String, dynamic> fields) {
     Map<String, dynamic> newFields = fields;

@@ -47,6 +47,7 @@ dependencies:
   shared_preferences: ^2.0.12
   flutter_charset_detector: ^1.0.1
   charset_converter: ^2.0.0
+  uuid: 3.0.6
 
 
 
