@@ -1,3 +1,5 @@
+import 'OrderItem.dart';
+
 class Product {
   String pid;
   String name;
@@ -18,5 +20,9 @@ class Product {
 
   Map<String, dynamic> toMap() {
     return {'pid': this.pid, 'name': this.name, 'price': this.price, 'quantity': this.quantity, 'expiration': this.expiration};
+  }
+
+  OrderItem toOrderItem() {
+    return OrderItem(name: this.name, quantity: 1, price: this.price);
   }
 }

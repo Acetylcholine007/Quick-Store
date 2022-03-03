@@ -16,7 +16,7 @@ class StoreBloc {
 
   getStore() async {
     _storeController.sink.add(await LocalDatabaseService.db.getStore());
-    print('DONE>>>>>>>>>');
+    // print('DONE>>>>>>>>>');
   }
 
   Future<Product> getProduct(String pid) async {
@@ -34,9 +34,9 @@ class StoreBloc {
     return result;
   }
 
-  Future<String> addOrder(Order order) async {
+  Future<String> addOrder(Order order, Map<String, int> newQuantity) async {
     String result = '';
-    result = await LocalDatabaseService.db.addOrder(order);
+    result = await LocalDatabaseService.db.addOrder(order, newQuantity);
     getStore();
     return result;
   }

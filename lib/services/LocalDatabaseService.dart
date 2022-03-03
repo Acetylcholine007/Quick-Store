@@ -22,7 +22,7 @@ class LocalDatabaseService {
           batch.execute(
               'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
           );
-          batch.execute('CREATE TABLE orders(id TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+          batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
           return batch.commit();
         },
         version: 1
@@ -73,17 +73,28 @@ class LocalDatabaseService {
     return result;
   }
 
-  Future<String> addOrder(Order order) async {
+  Future<String> addOrder(Order order, Map<String, int> newQuantity) async {
     String result = '';
     Database db = await database;
+    Batch batch = db.batch();
 
-    await db.insert(
+    newQuantity.forEach((key, value) {
+      batch.update(
+        'products',
+        {'quantity': value},
+        where: 'pid = ?',
+        whereArgs: [key],
+      );
+    });
+
+    batch.insert(
       'orders',
       order.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
-    )
-        .then((value) => result = 'SUCCESS')
-        .catchError((error) => result = error.toString());
+    );
+
+    await batch.commit().then((value) => result = 'SUCCESS')
+      .catchError((error) => result = error.toString());
     return result;
   }
 
@@ -160,7 +171,7 @@ class LocalDatabaseService {
     Database db = await database;
     List<Map<String, Object>> maps = await db.query(
         'orders',
-        where: 'pid = ?',
+        where: 'oid = ?',
         whereArgs: [oid],
         limit: 1
     );
