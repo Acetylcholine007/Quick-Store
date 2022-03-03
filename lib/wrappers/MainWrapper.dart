@@ -63,7 +63,7 @@ class _MainWrapperState extends State<MainWrapper> {
           ),
       ),
       Page(
-          DailyTallyPage(),
+          DailyTallyPage(bloc: widget.bloc, data: widget.data),
           BottomNavigationBarItem(
             label: 'Daily Tally',
             icon: Icon(Icons.receipt_long_rounded),

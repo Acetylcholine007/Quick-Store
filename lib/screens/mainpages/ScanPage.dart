@@ -5,6 +5,7 @@ import 'package:quick_store/models/Order.dart';
 import 'package:quick_store/models/OrderItem.dart';
 import 'package:quick_store/models/Product.dart';
 import 'package:quick_store/services/LocalDatabaseService.dart';
+import 'package:uuid/uuid.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({Key key}) : super(key: key);
@@ -19,62 +20,52 @@ class _ScanPageState extends State<ScanPage> {
   bool isProcessing = false;
 
   void orderHandler() async {
-    print(productItems);
+    var uuid = Uuid();
     Map<String, int> newQuantity = {};
     List<String> orderItemStrings = productItems.values.map((item) => item.orderItem.toDataString()).toList();
     productItems.forEach((key, value) => newQuantity[key] = value.quantity - value.orderItem.quantity);
 
-    print(Order(
-        oid: '',
-        datetime: '',
+    Order order = Order(
+        oid: uuid.v1(),
+        datetime: DateTime.now().toString(),
         itemString: orderItemStrings.reduce((value, element) => '${value};$element')
-    ));
-    print(newQuantity);
+    );
+    // print('>>>>>>>');
+    // print(productItems);
+    // print(order.itemString);
+    // print(newQuantity);
 
-    // String result = await LocalDatabaseService.db.addOrder(
-    //   Order(
-    //     oid: '',
-    //     datetime: '',
-    //     itemString: orderItemStrings.reduce((value, element) => '${value};$element')
-    //   ),
-    //   newQuantity
-    // );
+    String result = await LocalDatabaseService.db.addOrder(order, newQuantity);
 
-
+  if(result == 'SUCCESS') {
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('Order recorded'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
     setState(() {
       productItems = {};
-      productKeys = [];
       isProcessing = false;
     });
-  // if(result == 'SUCCESS') {
-  //   final snackBar = SnackBar(
-  //     duration: Duration(seconds: 3),
-  //     behavior: SnackBarBehavior.floating,
-  //     content: Text('Order recorded'),
-  //     action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
-  //   );
-  //   setState(() {
-  //     productItems = {};
-  //     isProcessing = false;
-  //   });
-  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  // } else {
-  //   showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //         title: Text('Recording Order'),
-  //         content: Text(result),
-  //         actions: [
-  //           TextButton(
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //               },
-  //               child: Text('OK')
-  //           )
-  //         ],
-  //       )
-  //   );
-  // }
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  } else {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Recording Order'),
+          content: Text(result),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK')
+            )
+          ],
+        )
+    );
+  }
   }
 
   @override
@@ -88,8 +79,6 @@ class _ScanPageState extends State<ScanPage> {
         result.rawContent.contains('<=QuickShop=>')
             ? result.rawContent.split('<=QuickShop=>')
             : null;
-        print('>>>>>>>>');
-        print(data);
         if (data != null && data[0] == data[1]) {
           Product product =
           await LocalDatabaseService.db.getProduct(data[0]);
@@ -180,10 +169,47 @@ class _ScanPageState extends State<ScanPage> {
                       builder: (context) {
                         Map<String, ProductItem> localProductItems = response.result == 'SUCCESS' ?
                         {response.product.pid: ProductItem(response.product.toOrderItem(), response.product.quantity)} : {};
-                        String productIndex = response.product.pid;
+                        String productIndex = response.result == 'SUCCESS' ? response.product.pid : '';
 
                         return StatefulBuilder(
                           builder: (context, localSetState) {
+                            void processScan() async {
+                              ScanResponse response = await scanHandler();
+                              if(response.result == 'SUCCESS') {
+                                localSetState(() {
+                                  if(localProductItems[response.product.pid] != null) {
+                                    localProductItems[response.product.pid] =
+                                        ProductItem(
+                                            localProductItems[response.product.pid].orderItem.combine(response.product.toOrderItem()),
+                                            response.product.quantity
+                                        );
+                                  } else {
+                                    localProductItems[response.product.pid] = ProductItem(
+                                        response.product.toOrderItem(),
+                                        response.product.quantity
+                                    );
+                                  }
+                                  productIndex = response.product.pid;
+                                });
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Scan QR Code'),
+                                      content: Text(response.result),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('OK')
+                                        )
+                                      ],
+                                    )
+                                );
+                              }
+                            }
+
                             return AlertDialog(
                               title: Text("Scan Products"),
                               content: localProductItems.isNotEmpty ? Row(
@@ -195,90 +221,20 @@ class _ScanPageState extends State<ScanPage> {
                               ) : Text('No product'),
                               actions: <Widget>[
                                 TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      setState(() {
-                                        productItems = localProductItems;
-                                        productKeys = productItems.keys.toList();
-                                        isProcessing = true;
-                                      });
-                                    },
-                                    child: Text('DONE')
-                                ),
-                                localProductItems.isNotEmpty ? TextButton(
-                                    onPressed: () async {
-                                      ScanResponse response = await scanHandler();
-                                      if(response.result == 'SUCCESS') {
-                                        localSetState(() {
-                                          if(localProductItems[response.product.pid] != null) {
-                                            localProductItems[response.product.pid] =
-                                              ProductItem(
-                                                localProductItems[response.product.pid].orderItem.combine(response.product.toOrderItem()),
-                                                response.product.quantity
-                                              );
-                                          } else {
-                                            localProductItems[response.product.pid] = ProductItem(
-                                                localProductItems[response.product.pid].orderItem.combine(response.product.toOrderItem()),
-                                                response.product.quantity
-                                            );
-                                          }
-                                          productIndex = response.product.pid;
-                                        });
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: Text('Scan QR Code'),
-                                            content: Text(response.result),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text('OK')
-                                              )
-                                            ],
-                                          )
-                                        );
-                                      }
-                                    },
-                                    child: Text('NEXT')
-                                ) : TextButton(onPressed: () async{
-                                  ScanResponse response = await scanHandler();
-                                  if(response.result == 'SUCCESS') {
-                                    localSetState(() {
-                                      if(localProductItems[response.product.pid] != null) {
-                                        localProductItems[response.product.pid] =
-                                            ProductItem(
-                                                localProductItems[response.product.pid].orderItem.combine(response.product.toOrderItem()),
-                                                response.product.quantity
-                                            );
-                                      } else {
-                                        localProductItems[response.product.pid] = ProductItem(
-                                            localProductItems[response.product.pid].orderItem.combine(response.product.toOrderItem()),
-                                            response.product.quantity
-                                        );
-                                      }
-                                      productIndex = response.product.pid;
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      productItems = localProductItems;
+                                      productKeys = productItems.keys.toList();
+                                      isProcessing = true;
                                     });
-                                  } else {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Text('Scan QR Code'),
-                                          content: Text(response.result),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('OK')
-                                            )
-                                          ],
-                                        )
-                                    );
-                                  }
-                                }, child: Text('SCAN')),
+                                  },
+                                  child: Text('DONE')
+                                ),
+                                TextButton(
+                                  onPressed: processScan,
+                                  child: Text(localProductItems.isNotEmpty ? 'NEXT' : 'SCAN')
+                                ),
                               ],
                             );
                           },

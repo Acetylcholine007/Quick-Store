@@ -54,18 +54,18 @@ class _InventoryPageState extends State<InventoryPage> {
                 controller: controller,
                 decoration: searchFieldDecoration.copyWith(
                   suffixIcon: IconButton(onPressed: () {
-                    // controller.text = "";
-                    // widget.searchHandler("");
+                    controller.text = "";
+                    setState(() => query = "");
                   }, icon: Icon(Icons.highlight_off_rounded))
                 ),
-                // onChanged: widget.searchHandler,
+                onChanged: (val) => setState(() => query = val),
               )
             ),
             Expanded(
               flex: 10,
               child: products.isEmpty ? NoItem(label: 'No Products') : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
+                  maxCrossAxisExtent: 150,
                   childAspectRatio: 1,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20

@@ -79,12 +79,13 @@ class LocalDatabaseService {
     Batch batch = db.batch();
 
     newQuantity.forEach((key, value) {
-      batch.update(
-        'products',
-        {'quantity': value},
-        where: 'pid = ?',
-        whereArgs: [key],
-      );
+      // batch.update(
+      //   'products',
+      //   {'quantity': value},
+      //   where: 'pid = ?',
+      //   whereArgs: [key],
+      // );
+      batch.rawUpdate('UPDATE products SET quantity = ? WHERE pid = ?', [value, key]);
     });
 
     batch.insert(

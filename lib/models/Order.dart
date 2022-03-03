@@ -13,6 +13,6 @@ class Order {
   }
 
   Map<String, dynamic> toMap() {
-    return {'oid': this.oid, 'datetime': this.datetime, 'itemString': this.itemString};
+    return {'id': this.oid, 'datetime': this.datetime, 'itemString': this.itemString};
   }
 }
