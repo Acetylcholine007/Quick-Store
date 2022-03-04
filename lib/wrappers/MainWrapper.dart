@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/screens/mainpages/DailyTallyPage.dart';
+import 'package:quick_store/screens/mainpages/HelpPage.dart';
+import 'package:quick_store/screens/mainpages/HistoryPage.dart';
 import 'package:quick_store/screens/mainpages/InventoryPage.dart';
 import 'package:quick_store/screens/mainpages/ScanPage.dart';
-// import 'package:barcode_scan2/barcode_scan2.dart';
-// import 'package:quick_store/components/AccountSuspended.dart';
-// import 'package:quick_store/components/Loading.dart';
-// import 'package:quick_store/models/Account.dart';
-// import 'package:quick_store/models/AccountData.dart';
-// import 'package:quick_store/models/AppTask.dart';
-//
-// import 'package:quick_store/screens/mainpages/AccountPage.dart';
-// import 'package:quick_store/screens/mainpages/DataPage.dart';
-// import 'package:quick_store/screens/mainpages/GuessHelpPage.dart';
-// import 'package:quick_store/screens/mainpages/GuessProfilePage.dart';
-// import 'package:quick_store/screens/mainpages/HelpPage.dart';
-// import 'package:quick_store/screens/mainpages/InventoryGlobalPage.dart';
-// import 'package:quick_store/screens/mainpages/InventoryLocalPage.dart';
-// import 'package:quick_store/screens/mainpages/ProfilePage.dart';
-// import 'package:provider/provider.dart';
-//
+import 'package:quick_store/screens/mainpages/SettingsPage.dart';
+import 'package:quick_store/services/DataService.dart';
+
 class MainWrapper extends StatefulWidget {
   final StoreBloc bloc;
   final LocalDBDataPack data;
@@ -32,8 +21,13 @@ class MainWrapper extends StatefulWidget {
 }
 
 class _MainWrapperState extends State<MainWrapper> {
+  bool isProcessing = false;
   int _currentIndex = 0;
   List<Page> pages;
+
+  void loadingHandler(bool status) {
+    setState(() => isProcessing = status);
+  }
 
   String getAccountType(bool isAnon, String type) {
     if (isAnon)
@@ -43,6 +37,38 @@ class _MainWrapperState extends State<MainWrapper> {
     if (!isAnon && type == "EMPLOYEE")
       return 'EMPLOYEE';
     return 'ADMIN';
+  }
+
+  void qrDownloadHandler() async {
+    Navigator.of(context).pop();
+    loadingHandler(true);
+    String result = await DataService.ds.qrPrintHandler(context, widget.data.products);
+    loadingHandler(false);
+    if(result == 'SUCCESS') {
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        content: Text('QR images saved to your Gallery'),
+        action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Export QR Code'),
+            content: Text(result),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK')
+              )
+            ],
+          )
+      );
+    }
   }
 
   @override
@@ -77,27 +103,85 @@ class _MainWrapperState extends State<MainWrapper> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final mainPages = pages.map((page) => page.page).toList();
-    // final account = widget.account.isAnon ? null : Provider.of<AccountData>(context);
 
-    // return Container(
-    //   child: Text('Quick App'),
-    // );
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
         backgroundColor: Color(0xFFE1DBDB),
+        endDrawer: Drawer(
+          backgroundColor: Color(0xFF423A3A).withOpacity(0.80),
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color(0xFF423A3A),
+                ),
+                margin: EdgeInsets.all(0),
+                child: Text(
+                  'Quick Shop',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text('History (Daily Tally)', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HistoryPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text('Help', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text('Settings', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text('Print QR Codes', style: TextStyle(color: Colors.white)),
+                onTap: qrDownloadHandler,
+              ),
+              ListTile(
+                title: Text('Exit', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  SystemNavigator.pop();
+                },
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.transparent,
-          actions: [
-            IconButton(icon: Icon(Icons.menu_rounded), onPressed: () {})
-          ],
+          bottom: isProcessing ? PreferredSize(
+              preferredSize: Size(double.infinity, 1.0),
+              child: LinearProgressIndicator(backgroundColor: Colors.white)
+          ) : null,
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: theme.primaryColor,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white.withOpacity(.60),
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.black.withOpacity(.60),
           selectedFontSize: 14,
           unselectedFontSize: 14,
           currentIndex: _currentIndex,

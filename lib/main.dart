@@ -36,8 +36,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Quick Store',
-      theme: ThemeData(primarySwatch:
-        MaterialColor(0xFFC55A11, getSwatch(Color(0xFFC55A11)))
+      theme: ThemeData(
+          primarySwatch: MaterialColor(0xFFFFFBFB, getSwatch(Color(0xFFFFFBFB))),
+
+        primaryTextTheme: Typography().black,
+        textTheme: Typography().black,
       ),
       home: AuthWrapper()
     );

@@ -36,16 +36,18 @@ class _InventoryPageState extends State<InventoryPage> {
     final products = filterProductHandler();
     final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: Color(0xFFE1DBDB),
       body: Container(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 1,
               child: Text(
                   'INVENTORY',
                   textAlign: TextAlign.left,
-                  style: theme.textTheme.headline4
+                  style: theme.textTheme.headline4.copyWith(color: Colors.black)
               )
             ),
             Expanded(
@@ -53,7 +55,8 @@ class _InventoryPageState extends State<InventoryPage> {
               child: TextFormField(
                 controller: controller,
                 decoration: searchFieldDecoration.copyWith(
-                  suffixIcon: IconButton(onPressed: () {
+                  suffixIcon: query == '' ? Icon(Icons.search_rounded) :
+                  IconButton(onPressed: () {
                     controller.text = "";
                     setState(() => query = "");
                   }, icon: Icon(Icons.highlight_off_rounded))
