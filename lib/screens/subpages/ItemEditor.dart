@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
+import 'package:quick_store/components/FieldLabel.dart';
 import 'package:quick_store/models/Product.dart';
 import 'package:quick_store/services/DataService.dart';
 import 'package:quick_store/shared/decorations.dart';
@@ -166,66 +167,102 @@ class _ItemEditorState extends State<ItemEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Product ${widget.isNew ? 'Creator' : 'Editor'}'),
-        actions: [
-          IconButton(onPressed: downloadHandler, icon: Icon(Icons.download_rounded)),
-        ] + (widget.isNew ? [] : [
-          IconButton(onPressed: deleteHandler, icon: Icon(Icons.delete_forever_rounded)),
-        ]),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(8),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              QrImage(
-                data: product.pid + '<=QuickShop=>' + product.pid,
-                version: QrVersions.auto,
-                size: 200
-              ),
-              TextFormField(
-                initialValue: product.name,
-                decoration: formFieldDecoration.copyWith(hintText: 'Product Name'),
-                validator: (val) => val.isEmpty ? 'Enter Product Name' : null,
-                onChanged: (val) => setState(() => product.name = val),
-              ),
-              TextFormField(
-                initialValue: product.price.toString(),
-                decoration: formFieldDecoration.copyWith(hintText: 'Product Price'),
-                validator: (val) => val.isEmpty ? 'Enter Product Price' : null,
-                onChanged: (val) => setState(() => product.price = val == '' ? 0 : double.parse(val)),
-                keyboardType: TextInputType.number,
-              ),
-              TextFormField(
-                initialValue: product.quantity.toString(),
-                decoration: formFieldDecoration.copyWith(hintText: 'Quantity'),
-                validator: (val) => val.isEmpty ? 'Enter Quantity' : null,
-                onChanged: (val) => setState(() => product.quantity = val == '' ? 0 : int.parse(val)),
-                keyboardType: TextInputType.number,
-              ),
-              DropdownButtonFormField(
-                menuMaxHeight: 500,
-                isExpanded: true,
-                value: expiration,
-                items: expirationChoices.map((String expire) => DropdownMenuItem(
-                    value: expire,
-                    child: Text(expire, overflow: TextOverflow.ellipsis)
-                )).toList(),
-                onChanged: (value) => expireHandler(value),
-                decoration: searchFieldDecoration,
-              ),
-              TextButton(
-                onPressed: submitHandler,
-                child: Text('SAVE'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Color(0xFFC4C4C4)),
-                  foregroundColor: MaterialStateProperty.all(Colors.black)
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+      child: Scaffold(
+        backgroundColor: Color(0xFFF2E7E7),
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(onPressed: downloadHandler, icon: Icon(Icons.download_rounded)),
+          ] + (widget.isNew ? [] : [
+            IconButton(onPressed: deleteHandler, icon: Icon(Icons.delete_forever_rounded)),
+          ]),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                QrImage(
+                    data: product.pid + '<=QuickStore=>' + product.pid,
+                    version: QrVersions.auto,
+                    size: 150
                 ),
-              )
-            ],
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FieldLabel(
+                        label: 'Product Name',
+                        child: TextFormField(
+                          initialValue: product.name,
+                          decoration: formFieldDecoration.copyWith(hintText: 'Product Name'),
+                          validator: (val) => val.isEmpty ? 'Enter Product Name' : null,
+                          onChanged: (val) => setState(() => product.name = val),
+                        ),
+                      ),
+                      FieldLabel(
+                        label: 'Price',
+                        child: TextFormField(
+                          initialValue: product.price.toString(),
+                          decoration: formFieldDecoration.copyWith(hintText: 'Product Price'),
+                          validator: (val) => val.isEmpty ? 'Enter Product Price' : null,
+                          onChanged: (val) => setState(() => product.price = val == '' ? 0 : double.parse(val)),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      FieldLabel(
+                        label: 'Quantity',
+                        child: TextFormField(
+                          initialValue: product.quantity.toString(),
+                          decoration: formFieldDecoration.copyWith(hintText: 'Quantity'),
+                          validator: (val) => val.isEmpty ? 'Enter Quantity' : null,
+                          onChanged: (val) => setState(() => product.quantity = val == '' ? 0 : int.parse(val)),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      FieldLabel(
+                        label: 'Expiration',
+                        child: DropdownButtonFormField(
+                          menuMaxHeight: 500,
+                          isExpanded: true,
+                          value: expiration,
+                          items: expirationChoices.map((String expire) => DropdownMenuItem(
+                              value: expire,
+                              child: Text(expire, overflow: TextOverflow.ellipsis)
+                          )).toList(),
+                          onChanged: (value) => expireHandler(value),
+                          decoration: searchFieldDecoration,
+                        ),
+                      ),
+                      FieldLabel(
+                        label: 'Total Price',
+                        child: Container(
+                          height: 50,
+                          padding: EdgeInsets.all(16),
+                          decoration: labelFieldDecoration,
+                          child: Text('₱ ${(product.quantity * product.price).toStringAsFixed(2)}',
+                          style: TextStyle(fontSize: 16)),
+                        )
+                      ),
+                      TextButton(
+                        onPressed: submitHandler,
+                        child: Text('SAVE'),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(Color(0xFFC4C4C4)),
+                            foregroundColor: MaterialStateProperty.all(Colors.black)
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

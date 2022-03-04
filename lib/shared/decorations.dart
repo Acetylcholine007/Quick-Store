@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 
 InputDecoration formFieldDecoration = InputDecoration(
-    border: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.white),
-      borderRadius: BorderRadius.circular(10),
-    ),
     filled: true,
-    fillColor: Colors.white,
-    isDense: true
-);
-
-InputDecoration searchFieldDecoration = InputDecoration(
     isDense: true,
     border: OutlineInputBorder(
       borderSide: BorderSide.none,
-      borderRadius: BorderRadius.circular(100),
+      borderRadius: BorderRadius.circular(10),
     ),
-    filled: true,
     fillColor: Colors.white,
-    hintText: 'Search'
+);
+
+InputDecoration searchFieldDecoration = InputDecoration(
+    filled: true,
+    isDense: true,
+    border: OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    fillColor: Colors.white,
+    hintText: 'Search',
+);
+
+BoxDecoration labelFieldDecoration = BoxDecoration(
+  color: Colors.white,
+  borderRadius: BorderRadius.circular(10)
 );

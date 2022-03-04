@@ -37,42 +37,38 @@ class _InventoryPageState extends State<InventoryPage> {
     final products = filterProductHandler(widget.data.products);
 
     return Scaffold(
-      backgroundColor: Color(0xFFE1DBDB),
+      backgroundColor: Color(0xFFF2E7E7),
       body: Container(
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-                flex: 1,
-                child: Text(
-                    'INVENTORY',
-                    textAlign: TextAlign.left,
-                    style: theme.textTheme.headline4.copyWith(color: Colors.black)
-                )
+            Text(
+                'INVENTORY',
+                textAlign: TextAlign.left,
+                style: theme.textTheme.headline4.copyWith(color: Colors.black)
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8,  20, 16),
+              child: TextFormField(
+                controller: controller,
+                decoration: searchFieldDecoration.copyWith(
+                  suffixIcon: query == '' ? Icon(Icons.search_rounded) :
+                  IconButton(onPressed: () {
+                    controller.text = "";
+                    setState(() => query = "");
+                  }, icon: Icon(Icons.highlight_off_rounded))
+                ),
+                onChanged: (val) => setState(() => query = val),
+              ),
             ),
             Expanded(
-                flex: 1,
-                child: TextFormField(
-                  controller: controller,
-                  decoration: searchFieldDecoration.copyWith(
-                      suffixIcon: query == '' ? Icon(Icons.search_rounded) :
-                      IconButton(onPressed: () {
-                        controller.text = "";
-                        setState(() => query = "");
-                      }, icon: Icon(Icons.highlight_off_rounded))
-                  ),
-                  onChanged: (val) => setState(() => query = val),
-                )
-            ),
-            Expanded(
-              flex: 10,
               child: products.isEmpty ? NoItem(label: 'No Products') : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20
+                  maxCrossAxisExtent: 150,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10
                 ),
                 itemCount: products.length,
                 itemBuilder: (BuildContext context, index) {

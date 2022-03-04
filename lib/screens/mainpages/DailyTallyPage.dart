@@ -44,42 +44,13 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
     });
 
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(16),
       child: Column(
-        children: [
+        children: (widget.isAll ? <Widget>[] : <Widget>[
           Expanded(
             flex: 1,
-            child: widget.isAll ? ElevatedButton(onPressed: () {
-              showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime.now(),
-                  builder: (BuildContext context, Widget child) {
-                    return Theme(
-                      data: ThemeData.light().copyWith(
-                        primaryColor: const Color(0xFFF2E7E7),
-                        colorScheme: ColorScheme.light(primary: const Color(0xFFF2E7E7)),
-                        buttonTheme: ButtonThemeData(
-                            textTheme: ButtonTextTheme.primary
-                        ),
-                      ),
-                      child: child,
-                    );
-                  }
-              )
-              .then((pickedDate) {
-                if (pickedDate == null) {
-                  return;
-                }
-                setState(() {
-                  print(pickedDate.toString().split(' ')[0]);
-                  dateToday = pickedDate.toString().split(' ')[0];
-                });
-              });
-            }, child: Text('Pick Date')) :
-            Text('Daily Tally', style: theme.textTheme.headline6)
-          ),
+            child: Text('Daily Tally', style: theme.textTheme.headline6)
+        )]) + <Widget>[
           Expanded(
               flex: 1,
               child: Row(
@@ -134,8 +105,39 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
                 }', style: theme.textTheme.headline6.copyWith(color: Colors.red))
               ],
             ),
-          )
-        ],
+          ),
+        ] + (widget.isAll ? <Widget>[Expanded(
+            flex: 1,
+            child: ElevatedButton(onPressed: () {
+              showDatePicker(
+                  context: context,
+                  initialDate: getDateTime(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime.now(),
+                  builder: (BuildContext context, Widget child) {
+                    return Theme(
+                      data: ThemeData.light().copyWith(
+                        // primaryColor: const Color(0xFFF2E7E7),
+                        colorScheme: ColorScheme.light(primary: theme.primaryColor),
+                        buttonTheme: ButtonThemeData(
+                            textTheme: ButtonTextTheme.primary
+                        ),
+                      ),
+                      child: child,
+                    );
+                  }
+              )
+                  .then((pickedDate) {
+                if (pickedDate == null) {
+                  return;
+                }
+                setState(() {
+                  print(pickedDate.toString().split(' ')[0]);
+                  dateToday = pickedDate.toString().split(' ')[0];
+                });
+              });
+            }, child: Text('Pick Date'))
+        )] : <Widget>[]),
       ),
     );
   }

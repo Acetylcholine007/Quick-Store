@@ -18,8 +18,10 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF2E7E7),
       appBar: AppBar(
-        title: Text('History Page'),
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
       ),
       body: DailyTallyPage(bloc: widget.bloc, data: widget.data, isAll: true),
     );

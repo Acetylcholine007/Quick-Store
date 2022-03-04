@@ -12,6 +12,7 @@ class AuthWrapper extends StatefulWidget {
 class _AuthWrapperState extends State<AuthWrapper> {
   StoreBloc bloc;
 
+
   @override
   void dispose() {
     bloc.dispose();

@@ -38,9 +38,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Quick Store',
       theme: ThemeData(
-        primarySwatch: MaterialColor(0xFFFFFBFB, getSwatch(Color(0xFFFFFBFB))),
+        fontFamily: 'Poppins',
+        // primarySwatch: MaterialColor(0xFFFFFBFB, getSwatch(Color(0xFFFFFBFB))),
+        primarySwatch: Colors.grey,
         primaryTextTheme: Typography().black,
         textTheme: Typography().black.copyWith(bodyText1: TextStyle(fontSize: 16)),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
       ),
       // home: AuthWrapper()
       home: FrontPage(),

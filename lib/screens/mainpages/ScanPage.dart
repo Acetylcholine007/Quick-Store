@@ -2,11 +2,11 @@ import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
+import 'package:quick_store/components/SummarySheet.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/models/Order.dart';
-import 'package:quick_store/models/OrderItem.dart';
 import 'package:quick_store/models/Product.dart';
-import 'package:quick_store/services/LocalDatabaseService.dart';
+import 'package:quick_store/models/ProductItem.dart';
 import 'package:uuid/uuid.dart';
 
 class ScanPage extends StatefulWidget {
@@ -35,10 +35,6 @@ class _ScanPageState extends State<ScanPage> {
         datetime: DateTime.now().toString(),
         itemString: orderItemStrings.reduce((value, element) => '${value};$element')
     );
-    // print('>>>>>>>');
-    // print(productItems);
-    // print(order.itemString);
-    // print(newQuantity);
 
     String result = await widget.bloc.addOrder(order, newQuantity);
 
@@ -73,6 +69,20 @@ class _ScanPageState extends State<ScanPage> {
   }
   }
 
+  void abortHandler() async {
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('Order canceled'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
+    setState(() {
+      productItems = {};
+      isProcessing = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -81,8 +91,8 @@ class _ScanPageState extends State<ScanPage> {
       var result = await BarcodeScanner.scan();
       if (result.rawContent.isNotEmpty) {
         List<String> data =
-        result.rawContent.contains('<=QuickShop=>')
-            ? result.rawContent.split('<=QuickShop=>')
+        result.rawContent.contains('<=QuickStore=>')
+            ? result.rawContent.split('<=QuickStore=>')
             : null;
         if (data != null && data[0] == data[1]) {
           Product product = widget.data.products.firstWhere((product) => product.pid == data[0]);
@@ -102,20 +112,7 @@ class _ScanPageState extends State<ScanPage> {
 
     return Container(
       padding: EdgeInsets.all(8),
-      child: isProcessing ? Column(
-        children: [
-          Expanded(flex: 1, child: Text('Order Summary - ${DateTime.now().toUtc()}')),
-          Expanded(flex: 10,
-            child: ListView.builder(
-              itemCount: productItems.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Text('${productItems[productKeys[index]].orderItem.name} ${productItems[productKeys[index]].orderItem.quantity} ${productItems[productKeys[index]].orderItem.totalPrice}');
-              }
-            ),
-          ),
-          Expanded(flex: 1, child: ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM')))
-        ],
-      ) : Column(
+      child: isProcessing ? SummarySheet(products: productItems, orderHandler: orderHandler, abortHandler: abortHandler) : Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text('Scan QR Code', style: theme.textTheme.headline4),
@@ -194,51 +191,99 @@ class _ScanPageState extends State<ScanPage> {
                                   }
                                   productIndex = response.product.pid;
                                 });
-                              } else {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Scan QR Code'),
-                                      content: Text(response.result),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('OK')
-                                        )
-                                      ],
-                                    )
-                                );
                               }
+                              // else {
+                              //   showDialog(
+                              //       context: context,
+                              //       builder: (context) => AlertDialog(
+                              //         title: Text('Scan QR Code'),
+                              //         content: Text(response.result),
+                              //         actions: [
+                              //           TextButton(
+                              //               onPressed: () {
+                              //                 Navigator.pop(context);
+                              //               },
+                              //               child: Text('OK')
+                              //           )
+                              //         ],
+                              //       )
+                              //   );
+                              // }
                             }
 
                             return AlertDialog(
-                              title: Text("Scan Products"),
-                              content: localProductItems.isNotEmpty ? Row(
+                              contentPadding: EdgeInsets.all(0),
+                              // title: Text("Scan Products"),
+                              content: localProductItems.isNotEmpty ? Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('Name: ${localProductItems[productIndex].orderItem.name}\nQuantity: ${localProductItems[productIndex].orderItem.quantity}\nPrice: ${localProductItems[productIndex].orderItem.totalPrice}'),
-                                  IconButton(onPressed: () => localSetState(() => localProductItems[productIndex].orderItem.quantity++), icon: Icon(Icons.arrow_drop_up_rounded)),
-                                  IconButton(onPressed: () => localSetState(() => localProductItems[productIndex].orderItem.quantity--), icon: Icon(Icons.arrow_drop_down_rounded)),
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Name: ${localProductItems[productIndex].orderItem.name}\n'
+                                                'Quantity: ${localProductItems[productIndex].orderItem.quantity}\n'
+                                                'Price: ${(localProductItems[productIndex].orderItem.totalPrice).toStringAsFixed(2)}',
+                                            style: theme.textTheme.bodyText1,
+                                          )
+                                        ),
+                                        IconButton(onPressed: () => localSetState(() => localProductItems[productIndex].orderItem.quantity++), icon: Icon(Icons.arrow_drop_up_rounded)),
+                                        IconButton(onPressed: () => localSetState(() => localProductItems[productIndex].orderItem.quantity--), icon: Icon(Icons.arrow_drop_down_rounded)),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.black, width: 1
+                                              ),
+                                              right: BorderSide(
+                                                  color: Colors.black, width: 1
+                                              ),
+                                            )
+                                          ),
+                                          child: Center(
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    productItems = localProductItems;
+                                                    productKeys = productItems.keys.toList();
+                                                    isProcessing = true;
+                                                  });
+                                                },
+                                                child: Text('DONE', style: TextStyle(color: Colors.red))
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                    color: Colors.black, width: 1
+                                                ),
+                                              )
+                                          ),
+                                          child: Center(
+                                            child: TextButton(
+                                                onPressed: processScan,
+                                                child: Text(localProductItems.isNotEmpty ? 'NEXT' : 'SCAN', style: TextStyle(color: Colors.black))
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  )
                                 ],
                               ) : Text('No product'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    setState(() {
-                                      productItems = localProductItems;
-                                      productKeys = productItems.keys.toList();
-                                      isProcessing = true;
-                                    });
-                                  },
-                                  child: Text('DONE', style: TextStyle(color: Colors.red))
-                                ),
-                                TextButton(
-                                  onPressed: processScan,
-                                  child: Text(localProductItems.isNotEmpty ? 'NEXT' : 'SCAN', style: TextStyle(color: Colors.black))
-                                ),
-                              ],
                             );
                           },
                         );
@@ -276,11 +321,4 @@ class ScanResponse {
   Product product;
   String result;
   ScanResponse(this.product, this.result);
-}
-
-class ProductItem {
-  OrderItem orderItem;
-  int quantity;
-
-  ProductItem(this.orderItem, this.quantity);
 }

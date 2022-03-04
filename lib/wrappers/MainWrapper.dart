@@ -101,7 +101,7 @@ class _MainWrapperState extends State<MainWrapper> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: Color(0xFFE1DBDB),
+        backgroundColor: Color(0xFFF2E7E7),
         endDrawer: Drawer(
           backgroundColor: Color(0xFF423A3A).withOpacity(0.80),
           child: ListView(
@@ -152,6 +152,14 @@ class _MainWrapperState extends State<MainWrapper> {
               ListTile(
                 title: Text('Print QR Codes', style: TextStyle(color: Colors.white)),
                 onTap: qrDownloadHandler,
+              ),
+              Divider(thickness: 1, height: 10, color: Colors.white, indent: 16, endIndent: 16),
+              ListTile(
+                title: Text('Logout', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  SystemNavigator.pop();
+                },
               ),
               ListTile(
                 title: Text('Exit', style: TextStyle(color: Colors.white)),

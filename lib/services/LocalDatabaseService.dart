@@ -23,7 +23,7 @@ class LocalDatabaseService {
               'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
           );
           batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
-          batch.execute('CREATE TABLE users(uid TEXT PRIMARY KEY, username TEXT, password TEXT )');
+          batch.execute('CREATE TABLE users(uid TEXT PRIMARY KEY, username TEXT, password TEXT, contact TEXT )');
           return batch.commit();
         },
         version: 1
@@ -80,12 +80,6 @@ class LocalDatabaseService {
     Batch batch = db.batch();
 
     newQuantity.forEach((key, value) {
-      // batch.update(
-      //   'products',
-      //   {'quantity': value},
-      //   where: 'pid = ?',
-      //   whereArgs: [key],
-      // );
       batch.rawUpdate('UPDATE products SET quantity = ? WHERE pid = ?', [value, key]);
     });
 

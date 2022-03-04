@@ -55,7 +55,7 @@ class DataService {
 
   Future<bool> downloadQRImage(BuildContext context, Product product) async {
     final qrValidationResult = QrValidator.validate(
-      data: product.pid + '<=QuickShop=>' + product.pid,
+      data: product.pid + '<=QuickStore=>' + product.pid,
       version: QrVersions.auto,
       errorCorrectionLevel: QrErrorCorrectLevel.L,
     );
