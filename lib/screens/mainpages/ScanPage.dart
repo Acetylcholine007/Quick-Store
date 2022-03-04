@@ -1,6 +1,8 @@
 import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:quick_store/BLoCs/StoreBloc.dart';
+import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/models/Order.dart';
 import 'package:quick_store/models/OrderItem.dart';
 import 'package:quick_store/models/Product.dart';
@@ -8,7 +10,10 @@ import 'package:quick_store/services/LocalDatabaseService.dart';
 import 'package:uuid/uuid.dart';
 
 class ScanPage extends StatefulWidget {
-  const ScanPage({Key key}) : super(key: key);
+  final StoreBloc bloc;
+  final LocalDBDataPack data;
+
+  const ScanPage({Key key, this.bloc, this.data}) : super(key: key);
 
   @override
   _ScanPageState createState() => _ScanPageState();
@@ -35,7 +40,7 @@ class _ScanPageState extends State<ScanPage> {
     // print(order.itemString);
     // print(newQuantity);
 
-    String result = await LocalDatabaseService.db.addOrder(order, newQuantity);
+    String result = await widget.bloc.addOrder(order, newQuantity);
 
   if(result == 'SUCCESS') {
     final snackBar = SnackBar(
@@ -80,9 +85,7 @@ class _ScanPageState extends State<ScanPage> {
             ? result.rawContent.split('<=QuickShop=>')
             : null;
         if (data != null && data[0] == data[1]) {
-          Product product =
-          await LocalDatabaseService.db.getProduct(data[0]);
-
+          Product product = widget.data.products.firstWhere((product) => product.pid == data[0]);
 
           if (product != null) {
             return ScanResponse(product, 'SUCCESS');
@@ -229,11 +232,11 @@ class _ScanPageState extends State<ScanPage> {
                                       isProcessing = true;
                                     });
                                   },
-                                  child: Text('DONE')
+                                  child: Text('DONE', style: TextStyle(color: Colors.red))
                                 ),
                                 TextButton(
                                   onPressed: processScan,
-                                  child: Text(localProductItems.isNotEmpty ? 'NEXT' : 'SCAN')
+                                  child: Text(localProductItems.isNotEmpty ? 'NEXT' : 'SCAN', style: TextStyle(color: Colors.black))
                                 ),
                               ],
                             );

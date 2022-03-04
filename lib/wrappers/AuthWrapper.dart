@@ -26,7 +26,6 @@ class _AuthWrapperState extends State<AuthWrapper> {
       stream: bloc.store,
       builder: (BuildContext context, AsyncSnapshot<LocalDBDataPack> snapshot) {
         if(snapshot.hasData) {
-          // print(snapshot.data.products);
           return MainWrapper(bloc: bloc, data: snapshot.data);
         } else {
           return Loading('Loading Store Database');

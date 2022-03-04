@@ -23,7 +23,6 @@ class MainWrapper extends StatefulWidget {
 class _MainWrapperState extends State<MainWrapper> {
   bool isProcessing = false;
   int _currentIndex = 0;
-  List<Page> pages;
 
   void loadingHandler(bool status) {
     setState(() => isProcessing = status);
@@ -72,36 +71,31 @@ class _MainWrapperState extends State<MainWrapper> {
   }
 
   @override
-  void initState() {
-    pages = [
-      Page(
-          InventoryPage(bloc: widget.bloc, data: widget.data),
-          BottomNavigationBarItem(
-            label: 'Inventory',
-            icon: Icon(Icons.archive_rounded),
-          ),
-      ),
-      Page(
-          ScanPage(),
-          BottomNavigationBarItem(
-            label: 'Scan',
-            icon: Icon(Icons.qr_code_scanner_rounded),
-          ),
-      ),
-      Page(
-          DailyTallyPage(bloc: widget.bloc, data: widget.data),
-          BottomNavigationBarItem(
-            label: 'Daily Tally',
-            icon: Icon(Icons.receipt_long_rounded),
-          ),
-      ),
-    ];
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    List<Page> pages = [
+      Page(
+        InventoryPage(bloc: widget.bloc, data: widget.data),
+        BottomNavigationBarItem(
+          label: 'Inventory',
+          icon: Icon(Icons.archive_rounded),
+        ),
+      ),
+      Page(
+        ScanPage(bloc: widget.bloc, data: widget.data),
+        BottomNavigationBarItem(
+          label: 'Scan',
+          icon: Icon(Icons.qr_code_scanner_rounded),
+        ),
+      ),
+      Page(
+        DailyTallyPage(bloc: widget.bloc, data: widget.data, isAll: false),
+        BottomNavigationBarItem(
+          label: 'Daily Tally',
+          icon: Icon(Icons.receipt_long_rounded),
+        ),
+      ),
+    ];
     final mainPages = pages.map((page) => page.page).toList();
 
     return GestureDetector(
@@ -131,7 +125,7 @@ class _MainWrapperState extends State<MainWrapper> {
                   Navigator.of(context).pop();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HistoryPage()),
+                    MaterialPageRoute(builder: (context) => HistoryPage(bloc: widget.bloc, data: widget.data)),
                   );
                 },
               ),

@@ -221,8 +221,8 @@ class _ItemEditorState extends State<ItemEditor> {
                 onPressed: submitHandler,
                 child: Text('SAVE'),
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(theme.primaryColor),
-                  foregroundColor: MaterialStateProperty.all(Colors.white)
+                  backgroundColor: MaterialStateProperty.all(Color(0xFFC4C4C4)),
+                  foregroundColor: MaterialStateProperty.all(Colors.black)
                 ),
               )
             ],

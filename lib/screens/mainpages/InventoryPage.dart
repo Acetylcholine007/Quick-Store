@@ -21,11 +21,11 @@ class _InventoryPageState extends State<InventoryPage> {
   String query = '';
   TextEditingController controller = TextEditingController();
   
-  List<Product> filterProductHandler() {
+  List<Product> filterProductHandler(List<Product> products) {
     if(query == '') {
-      return widget.data.products;
+      return products;
     } else {
-      return widget.data.products.where(
+      return products.where(
         (product) => product.name.contains(new RegExp(query, caseSensitive: false))
       ).toList();
     }
@@ -33,8 +33,9 @@ class _InventoryPageState extends State<InventoryPage> {
   
   @override
   Widget build(BuildContext context) {
-    final products = filterProductHandler();
     final theme = Theme.of(context);
+    final products = filterProductHandler(widget.data.products);
+
     return Scaffold(
       backgroundColor: Color(0xFFE1DBDB),
       body: Container(
@@ -43,44 +44,44 @@ class _InventoryPageState extends State<InventoryPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 1,
-              child: Text(
-                  'INVENTORY',
-                  textAlign: TextAlign.left,
-                  style: theme.textTheme.headline4.copyWith(color: Colors.black)
-              )
+                flex: 1,
+                child: Text(
+                    'INVENTORY',
+                    textAlign: TextAlign.left,
+                    style: theme.textTheme.headline4.copyWith(color: Colors.black)
+                )
             ),
             Expanded(
-              flex: 1,
-              child: TextFormField(
-                controller: controller,
-                decoration: searchFieldDecoration.copyWith(
-                  suffixIcon: query == '' ? Icon(Icons.search_rounded) :
-                  IconButton(onPressed: () {
-                    controller.text = "";
-                    setState(() => query = "");
-                  }, icon: Icon(Icons.highlight_off_rounded))
-                ),
-                onChanged: (val) => setState(() => query = val),
-              )
+                flex: 1,
+                child: TextFormField(
+                  controller: controller,
+                  decoration: searchFieldDecoration.copyWith(
+                      suffixIcon: query == '' ? Icon(Icons.search_rounded) :
+                      IconButton(onPressed: () {
+                        controller.text = "";
+                        setState(() => query = "");
+                      }, icon: Icon(Icons.highlight_off_rounded))
+                  ),
+                  onChanged: (val) => setState(() => query = val),
+                )
             ),
             Expanded(
               flex: 10,
               child: products.isEmpty ? NoItem(label: 'No Products') : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20
+                    maxCrossAxisExtent: 150,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20
                 ),
                 itemCount: products.length,
                 itemBuilder: (BuildContext context, index) {
                   return GestureDetector(
-                    onTap: () =>
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ItemEditor(isNew: false, bloc: widget.bloc, product: products[index])),
-                        ),
+                      onTap: () =>
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ItemEditor(isNew: false, bloc: widget.bloc, product: products[index])),
+                          ),
                       child: ProductTile(product: products[index])
                   );
                 }
@@ -92,10 +93,10 @@ class _InventoryPageState extends State<InventoryPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () =>
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ItemEditor(isNew: true, bloc: widget.bloc)),
-          ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ItemEditor(isNew: true, bloc: widget.bloc)),
+            ),
       ),
     );
   }

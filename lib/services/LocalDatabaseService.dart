@@ -23,6 +23,7 @@ class LocalDatabaseService {
               'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
           );
           batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+          batch.execute('CREATE TABLE users(uid TEXT PRIMARY KEY, username TEXT, password TEXT )');
           return batch.commit();
         },
         version: 1

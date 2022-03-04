@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/screens/mainpages/FrontPage.dart';
 
 import 'package:quick_store/wrappers/AuthWrapper.dart';
 
@@ -37,12 +38,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Quick Store',
       theme: ThemeData(
-          primarySwatch: MaterialColor(0xFFFFFBFB, getSwatch(Color(0xFFFFFBFB))),
-
+        primarySwatch: MaterialColor(0xFFFFFBFB, getSwatch(Color(0xFFFFFBFB))),
         primaryTextTheme: Typography().black,
-        textTheme: Typography().black,
+        textTheme: Typography().black.copyWith(bodyText1: TextStyle(fontSize: 16)),
       ),
-      home: AuthWrapper()
+      // home: AuthWrapper()
+      home: FrontPage(),
     );
   }
 }

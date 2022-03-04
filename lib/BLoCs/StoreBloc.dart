@@ -90,6 +90,13 @@ class StoreBloc {
     return result;
   }
 
+  Future<bool> getHasProducts() async {
+    bool result = false;
+    result = await LocalDatabaseService.db.getHasProducts();
+    getStore();
+    return result;
+  }
+
   dispose() {
     _storeController.close();
   }
