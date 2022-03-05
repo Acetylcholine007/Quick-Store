@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
+import 'package:quick_store/models/Account.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/screens/mainpages/DailyTallyPage.dart';
 import 'package:quick_store/screens/mainpages/HelpPage.dart';
@@ -13,8 +14,10 @@ import 'package:quick_store/services/DataService.dart';
 class MainWrapper extends StatefulWidget {
   final StoreBloc bloc;
   final LocalDBDataPack data;
+  final Function logoutHandler;
+  final Account account;
 
-  MainWrapper({this.bloc, this.data});
+  MainWrapper({this.bloc, this.data, this.logoutHandler, this.account});
 
   @override
   _MainWrapperState createState() => _MainWrapperState();
@@ -111,12 +114,20 @@ class _MainWrapperState extends State<MainWrapper> {
                   color: Color(0xFF423A3A),
                 ),
                 margin: EdgeInsets.all(0),
-                child: Text(
-                  'Quick Shop',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Quick Shop',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(widget.account.username, style: theme.textTheme.headline6.copyWith(color: Colors.white)),
+                    Text(widget.account.contact, style: theme.textTheme.headline6.copyWith(color: Colors.white))
+                  ],
                 ),
               ),
               ListTile(
@@ -158,7 +169,7 @@ class _MainWrapperState extends State<MainWrapper> {
                 title: Text('Logout', style: TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  SystemNavigator.pop();
+                  widget.logoutHandler();
                 },
               ),
               ListTile(

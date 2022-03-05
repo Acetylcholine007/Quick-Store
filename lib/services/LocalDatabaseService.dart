@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:quick_store/models/Account.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
+import 'package:quick_store/models/LoginResponse.dart';
 import 'package:quick_store/models/Order.dart';
 import 'package:quick_store/models/Product.dart';
 import 'package:sqflite/sqflite.dart';
@@ -229,5 +231,45 @@ class LocalDatabaseService {
     int count = Sqflite
         .firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM orders'));
     return count != 0;
+  }
+
+  Future<LoginResponse> login(String username, String password) async {
+    Database db = await database;
+    List<Map<String, Object>> maps = await db.query(
+        'users',
+        where: 'username = ? AND password = ?',
+        whereArgs: [username, password],
+        limit: 1
+    );
+
+    if(maps == null || maps.isEmpty)
+      return LoginResponse(null, 'Incorrect Credentials');
+
+    return LoginResponse(Account.fromLocalDB(maps[0]), 'SUCCESS');
+  }
+
+  Future<String> signup(Account account) async {
+    String result = '';
+    Database db = await database;
+
+    List<Map<String, Object>> maps = await db.query(
+        'users',
+        where: 'username = ?',
+        whereArgs: [account.username],
+        limit: 1
+    );
+
+    if(maps == null || maps.isEmpty) {
+      await db.insert(
+        'users',
+        account.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      )
+          .then((value) => result = 'SUCCESS')
+          .catchError((error) => result = error.toString());
+      return result;
+    } else {
+      return 'Username already exist';
+    }
   }
 }
