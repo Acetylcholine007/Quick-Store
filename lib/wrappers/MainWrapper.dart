@@ -10,6 +10,7 @@ import 'package:quick_store/screens/mainpages/InventoryPage.dart';
 import 'package:quick_store/screens/mainpages/ScanPage.dart';
 import 'package:quick_store/screens/mainpages/SettingsPage.dart';
 import 'package:quick_store/services/DataService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainWrapper extends StatefulWidget {
   final StoreBloc bloc;
@@ -167,8 +168,11 @@ class _MainWrapperState extends State<MainWrapper> {
               Divider(thickness: 1, height: 10, color: Colors.white, indent: 16, endIndent: 16),
               ListTile(
                 title: Text('Logout', style: TextStyle(color: Colors.white)),
-                onTap: () {
+                onTap: () async {
                   Navigator.of(context).pop();
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('username');
+                  await prefs.remove('password');
                   widget.logoutHandler();
                 },
               ),

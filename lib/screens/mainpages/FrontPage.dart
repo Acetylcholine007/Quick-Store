@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/models/LoginResponse.dart';
+import 'package:quick_store/services/LocalDatabaseService.dart';
 import 'package:quick_store/wrappers/AuthWrapper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FrontPage extends StatefulWidget {
   const FrontPage({Key key}) : super(key: key);
@@ -33,11 +36,24 @@ class _FrontPageState extends State<FrontPage> {
                 ],
               ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AuthWrapper()),
-                  );
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  String username = prefs.getString('username') ?? '';
+                  String password = prefs.getString('password') ?? '';
+
+                  if(username != '' && password != '') {
+                    LoginResponse response = await LocalDatabaseService.db.login(username, password);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AuthWrapper(
+                          account: response.account != null &&
+                              response.message == 'SUCCESS' ?
+                          response.account : null)
+                      ),
+                    );
+                  } else {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AuthWrapper(account: null)));
+                  }
                 },
                 child: Text('Get Started'),
                   style: ButtonStyle(

@@ -5,6 +5,7 @@ import 'package:quick_store/models/LoginResponse.dart';
 import 'package:quick_store/screens/mainpages/SignupPage.dart';
 import 'package:quick_store/services/LocalDatabaseService.dart';
 import 'package:quick_store/shared/decorations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   final Function setAccount;
@@ -24,7 +25,9 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState.validate()) {
       LoginResponse response = await LocalDatabaseService.db.login(username, password);
       if(response.account != null && response.message == 'SUCCESS') {
-        // Navigator.pop(context);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', response.account.username);
+        await prefs.setString('password', response.account.password);
         widget.setAccount(response.account);
       } else {
         showDialog(

@@ -7,6 +7,10 @@ import 'package:quick_store/screens/mainpages/LoginPage.dart';
 import 'package:quick_store/wrappers/MainWrapper.dart';
 
 class AuthWrapper extends StatefulWidget {
+  final Account account;
+
+  AuthWrapper({this.account});
+
   @override
   _AuthWrapperState createState() => _AuthWrapperState();
 }
@@ -25,6 +29,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
     setState(() {
       account = null;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    account = widget.account;
   }
 
   @override
