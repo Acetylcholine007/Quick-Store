@@ -90,6 +90,13 @@ class StoreBloc {
     return result;
   }
 
+  Future<String> importProducts(List<Product> products) async {
+    String result = '';
+    result = await LocalDatabaseService.db.importProducts(products);
+    getStore();
+    return result;
+  }
+
   Future<bool> getHasProducts() async {
     bool result = false;
     result = await LocalDatabaseService.db.getHasProducts();

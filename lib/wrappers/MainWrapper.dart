@@ -4,6 +4,7 @@ import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/models/Account.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/screens/mainpages/DailyTallyPage.dart';
+import 'package:quick_store/screens/mainpages/DataPage.dart';
 import 'package:quick_store/screens/mainpages/HelpPage.dart';
 import 'package:quick_store/screens/mainpages/HistoryPage.dart';
 import 'package:quick_store/screens/mainpages/InventoryPage.dart';
@@ -164,6 +165,16 @@ class _MainWrapperState extends State<MainWrapper> {
               ListTile(
                 title: Text('Print QR Codes', style: TextStyle(color: Colors.white)),
                 onTap: qrDownloadHandler,
+              ),
+              ListTile(
+                title: Text('Manage Data', style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DataPage(bloc: widget.bloc, data: widget.data)),
+                  );
+                }
               ),
               Divider(thickness: 1, height: 10, color: Colors.white, indent: 16, endIndent: 16),
               ListTile(

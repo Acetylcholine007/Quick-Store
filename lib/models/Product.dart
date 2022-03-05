@@ -18,6 +18,14 @@ class Product {
     this.expiration = newFields['expiration'];
   }
 
+  Product.fromList(List row) {
+    this.pid = row[0].toString();
+    this.name = row[1].toString();
+    this.price = row[2];
+    this.quantity = row[3];
+    this.expiration = row[4].toString();
+  }
+
   Map<String, dynamic> toMap() {
     return {'pid': this.pid, 'name': this.name, 'price': this.price, 'quantity': this.quantity, 'expiration': this.expiration};
   }
@@ -25,4 +33,10 @@ class Product {
   OrderItem toOrderItem() {
     return OrderItem(name: this.name, quantity: 1, price: this.price);
   }
+
+  List<String> toStringList() {
+    return [this.pid, this.name, this.price.toString(), this.quantity.toString(), this.expiration];
+  }
+
+  static List<String> get headers => ['pid', 'name', 'price', 'quantity', 'expiration'];
 }

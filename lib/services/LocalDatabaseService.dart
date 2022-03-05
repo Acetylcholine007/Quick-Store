@@ -180,45 +180,6 @@ class LocalDatabaseService {
     return Order.fromLocalDB(maps[0]);
   }
 
-  Future<String> clearProducts() async {
-    String result = '';
-    Database db = await database;
-
-    await db.rawDelete("DELETE * from product")
-        .then((value) => result = "SUCCESS")
-        .catchError((error) => result = error.toString());
-
-    return result;
-  }
-
-  Future<String> clearOrders() async {
-    String result = '';
-    Database db = await database;
-
-    await db.rawDelete("DELETE * from orders")
-        .then((value) => result = "SUCCESS")
-        .catchError((error) => result = error.toString());
-
-    return result;
-  }
-
-  Future<String> importOrders(List<Order> orders) async {
-    Database db = await database;
-    String result = '';
-    Batch batch = db.batch();
-
-    orders.forEach((order) => batch.insert(
-        'orders',
-        order.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace)
-    );
-    await batch.commit()
-        .then((value) => result = 'SUCCESS')
-        .catchError((error) => result = error.toString());
-
-    return result;
-  }
-
   Future<bool> getHasProducts() async {
     Database db = await database;
     int count = Sqflite
@@ -271,5 +232,78 @@ class LocalDatabaseService {
     } else {
       return 'Username already exist';
     }
+  }
+
+  Future<String> importProducts(List<Product> products) async {
+    Database db = await database;
+    String result = '';
+    Batch batch = db.batch();
+
+    batch.execute("DROP TABLE IF EXISTS products");
+    batch.execute(
+        'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
+    );
+
+    products.forEach((product) => batch.insert(
+        'products',
+        product.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace)
+    );
+    await batch.commit()
+        .then((value) => result = 'SUCCESS')
+        .catchError((error) => result = error.toString());
+
+    return result;
+  }
+
+  Future<String> importOrders(List<Order> orders) async {
+    Database db = await database;
+    String result = '';
+    Batch batch = db.batch();
+
+    batch.execute("DROP TABLE IF EXISTS orders");
+    batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+    orders.forEach((order) => batch.insert(
+        'orders',
+        order.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace)
+    );
+    await batch.commit()
+        .then((value) => result = 'SUCCESS')
+        .catchError((error) => result = error.toString());
+
+    return result;
+  }
+
+  Future<String> clearProducts() async {
+    String result = '';
+    Database db = await database;
+    Batch batch = db.batch();
+
+    batch.execute("DROP TABLE IF EXISTS products");
+    batch.execute(
+        'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
+    );
+
+    await batch.commit()
+        .then((value) => result = 'SUCCESS')
+        .catchError((error) => result = error.toString());
+
+    return result;
+  }
+
+  Future<String> clearOrders() async {
+    String result = '';
+    Database db = await database;
+    Batch batch = db.batch();
+
+    batch.execute("DROP TABLE IF EXISTS orders");
+    batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+
+    await batch.commit()
+        .then((value) => result = 'SUCCESS')
+        .catchError((error) => result = error.toString());
+
+    return result;
   }
 }
