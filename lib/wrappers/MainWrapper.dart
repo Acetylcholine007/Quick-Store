@@ -187,14 +187,17 @@ class _MainWrapperState extends State<MainWrapper> {
           backgroundColor: Colors.transparent,
           bottom: isProcessing ? PreferredSize(
               preferredSize: Size(double.infinity, 1.0),
-              child: LinearProgressIndicator(backgroundColor: Colors.white)
+              child: LinearProgressIndicator(backgroundColor: Color(0xFF459A7C))
           ) : null,
         ),
         bottomNavigationBar: BottomNavigationBar(
+          selectedIconTheme: IconThemeData(
+            color: Colors.black
+          ),
           type: BottomNavigationBarType.fixed,
-          backgroundColor: theme.primaryColor,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black.withOpacity(.60),
+          backgroundColor: Colors.white,
+          selectedItemColor: Color(0xFF459A7C),
+          unselectedItemColor: Colors.black.withOpacity(.50),
           selectedFontSize: 14,
           unselectedFontSize: 14,
           currentIndex: _currentIndex,

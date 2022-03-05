@@ -12,15 +12,26 @@ class _FrontPageState extends State<FrontPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+      ),
+      backgroundColor: Color(0xFFF2E7E7),
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Quick Store', style: theme.textTheme.headline4, textAlign: TextAlign.center,),
+              Column(
+                children: [
+                  Text('QUICK STORE', style: theme.textTheme.headline4.copyWith(color: Colors.black, fontWeight: FontWeight.w700)),
+                  Text('INVENTORY', style: theme.textTheme.bodyText1.copyWith(color: Color(0xFF459A7C), fontWeight: FontWeight.w700))
+                ],
+              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -28,7 +39,20 @@ class _FrontPageState extends State<FrontPage> {
                     MaterialPageRoute(builder: (context) => AuthWrapper()),
                   );
                 },
-                child: Text('Get Started')
+                child: Text('Get Started'),
+                  style: ButtonStyle(
+                    textStyle: MaterialStateProperty.all(TextStyle(
+                      fontSize: 24
+                    )),
+                    padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8, horizontal: 20)),
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    backgroundColor: MaterialStateProperty.all(Color(0xFF459A7C)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          )
+                      )
+                  )
               )
             ],
           ),

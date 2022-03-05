@@ -25,3 +25,13 @@ BoxDecoration labelFieldDecoration = BoxDecoration(
   color: Colors.white,
   borderRadius: BorderRadius.circular(10)
 );
+
+ButtonStyle formButtonDecoration = ButtonStyle(
+  backgroundColor: MaterialStateProperty.all(Colors.white),
+  foregroundColor: MaterialStateProperty.all(Color(0xFF459A7C)),
+  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      )
+  )
+);

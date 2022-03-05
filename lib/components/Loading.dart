@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Loading extends StatelessWidget {
   final String title;
@@ -10,16 +9,18 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      // decoration: BoxDecoration(
-      //   image: DecorationImage(image: new AssetImage("assets/images/background.jpg"), fit: BoxFit.cover,),
-      // ),
+      color: Color(0xFFF2E7E7),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SpinKitChasingDots(
-                color: theme.primaryColor,
-                size: 50
+            SizedBox(
+              height: 80,
+              width: 80,
+              child: CircularProgressIndicator(
+                  color: Color(0xFF459A7C),
+                  strokeWidth: 12
+              ),
             ),
             SizedBox(height: 50),
             Text(title, style: theme.textTheme.headline6),

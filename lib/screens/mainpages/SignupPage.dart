@@ -82,82 +82,90 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
+        backgroundColor: Color(0xFFF2E7E7),
         appBar: AppBar(
-          title: Text('Signup'),
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
         ),
         body: Container(
           padding: EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Text('SIGN-UP'),
-                      FieldLabel(
-                        label: 'USERNAME',
-                        child: TextFormField(
-                            initialValue: username,
-                            decoration:
-                            formFieldDecoration.copyWith(hintText: 'Username'),
-                            validator: (val) => val.isEmpty ? 'Enter Username' : null,
-                            onChanged: (val) => setState(() => username = val)
-                        ),
-                      ),
-                      FieldLabel(
-                        label: 'EMAIL/NUMBER',
-                        child: TextFormField(
-                            initialValue: contact,
-                            decoration:
-                            formFieldDecoration.copyWith(hintText: 'Email/Number'),
-                            validator: (val) => val.isEmpty ? 'Enter Email/Number' : null,
-                            onChanged: (val) => setState(() => contact = val)
-                        ),
-                      ),
-                      FieldLabel(
-                        label: 'PASSWORD',
-                        child: TextFormField(
-                          initialValue: password,
-                          decoration:
-                          formFieldDecoration.copyWith(
-                              hintText: 'Password',
-                              suffixIcon: IconButton(
-                                  onPressed: () => setState(() => hidePassword = !hidePassword),
-                                  icon: Icon(Icons.visibility)
-                              )
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Text('SIGN-UP', style: theme.textTheme.headline4.copyWith(color: Colors.black, fontWeight: FontWeight.w700)),
+                        SizedBox(height: 50),
+                        FieldLabel(
+                          label: 'USERNAME',
+                          child: TextFormField(
+                              initialValue: username,
+                              decoration:
+                              formFieldDecoration.copyWith(hintText: 'Username'),
+                              validator: (val) => val.isEmpty ? 'Enter Username' : null,
+                              onChanged: (val) => setState(() => username = val)
                           ),
-                          validator: (val) => val.isEmpty ? 'Enter Password' : null,
-                          onChanged: (val) => setState(() => password = val),
-                          obscureText: hidePassword,
                         ),
-                      ),
-                      FieldLabel(
-                        label: 'CONFIRM PASSWORD',
-                        child: TextFormField(
-                          initialValue: confirmPassword,
-                          decoration:
-                          formFieldDecoration.copyWith(
-                              hintText: 'Confirm Password',
-                              suffixIcon: IconButton(
-                                  onPressed: () => setState(() => hideConfirmPassword = !hideConfirmPassword),
-                                  icon: Icon(Icons.visibility)
-                              )
+                        FieldLabel(
+                          label: 'EMAIL/NUMBER',
+                          child: TextFormField(
+                              initialValue: contact,
+                              decoration:
+                              formFieldDecoration.copyWith(hintText: 'Email/Number'),
+                              validator: (val) => val.isEmpty ? 'Enter Email/Number' : null,
+                              onChanged: (val) => setState(() => contact = val)
                           ),
-                          validator: (val) => val.isEmpty ? 'Enter Confirm Password' : null,
-                          onChanged: (val) => setState(() => confirmPassword = val),
-                          obscureText: hideConfirmPassword,
                         ),
-                      ),
-                      ElevatedButton(onPressed: signupHandler, child: Text('SIGN UP'))
-                    ],
+                        FieldLabel(
+                          label: 'PASSWORD',
+                          child: TextFormField(
+                            initialValue: password,
+                            decoration:
+                            formFieldDecoration.copyWith(
+                                hintText: 'Password',
+                                suffixIcon: IconButton(
+                                    onPressed: () => setState(() => hidePassword = !hidePassword),
+                                    icon: Icon(Icons.visibility)
+                                )
+                            ),
+                            validator: (val) => val.isEmpty ? 'Enter Password' : null,
+                            onChanged: (val) => setState(() => password = val),
+                            obscureText: hidePassword,
+                          ),
+                        ),
+                        FieldLabel(
+                          label: 'CONFIRM PASSWORD',
+                          child: TextFormField(
+                            initialValue: confirmPassword,
+                            decoration:
+                            formFieldDecoration.copyWith(
+                                hintText: 'Confirm Password',
+                                suffixIcon: IconButton(
+                                    onPressed: () => setState(() => hideConfirmPassword = !hideConfirmPassword),
+                                    icon: Icon(Icons.visibility)
+                                )
+                            ),
+                            validator: (val) => val.isEmpty ? 'Enter Confirm Password' : null,
+                            onChanged: (val) => setState(() => confirmPassword = val),
+                            obscureText: hideConfirmPassword,
+                          ),
+                        ),
+                        SizedBox(height: 50),
+                        ElevatedButton(onPressed: signupHandler, child: Text('SIGN UP'), style: formButtonDecoration)
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

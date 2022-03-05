@@ -20,41 +20,62 @@ class ItemEditor extends StatefulWidget {
 class _ItemEditorState extends State<ItemEditor> {
   final _formKey = GlobalKey<FormState>();
   Product product;
-  String expiration = '1 Week';
+  String expiration = 'None';
   List<String> expirationChoices = [
+    '1 Day',
     '1 Week',
     '1 Month',
-    '1 Year'
+    '1 Year',
+    'None'
   ];
 
   void submitHandler() async {
-    product.expiration = expiration;
-    String result = widget.isNew ? await widget.bloc.addProduct(product) : await widget.bloc.editProduct(product);
-    if(result == 'SUCCESS') {
+    if (_formKey.currentState.validate()) {
+      product.expiration = expiration;
+      String result = widget.isNew
+          ? await widget.bloc.addProduct(product)
+          : await widget.bloc.editProduct(product);
+      if (result == 'SUCCESS') {
+        final snackBar = SnackBar(
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          content: Text('Product ${widget.isNew ? 'added' : 'edited'}'),
+          action: SnackBarAction(label: 'OK',
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+        );
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) =>
+                AlertDialog(
+                  title: Text('${widget.isNew ? 'Adding' : 'Editing'} Product'),
+                  content: Text(result),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('OK')
+                    )
+                  ],
+                )
+        );
+      }
+    } else {
       final snackBar = SnackBar(
         duration: Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        content: Text('Product ${widget.isNew ? 'added' : 'edited'}'),
-        action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+        content: Text('Fill up all the fields'),
+        action: SnackBarAction(label: 'OK',
+            onPressed: () =>
+                ScaffoldMessenger.of(context)
+                    .hideCurrentSnackBar()),
       );
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('${widget.isNew ? 'Adding' : 'Editing'} Product'),
-            content: Text(result),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('OK')
-              )
-            ],
-          )
-      );
+      ScaffoldMessenger.of(context).showSnackBar(
+          snackBar);
     }
   }
 
@@ -167,6 +188,7 @@ class _ItemEditorState extends State<ItemEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -230,7 +252,7 @@ class _ItemEditorState extends State<ItemEditor> {
                         label: 'Expiration',
                         child: DropdownButtonFormField(
                           menuMaxHeight: 500,
-                          isExpanded: true,
+                          isExpanded: false,
                           value: expiration,
                           items: expirationChoices.map((String expire) => DropdownMenuItem(
                               value: expire,
