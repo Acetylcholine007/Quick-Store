@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/models/Account.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
@@ -83,21 +84,21 @@ class _MainWrapperState extends State<MainWrapper> {
         InventoryPage(bloc: widget.bloc, data: widget.data),
         BottomNavigationBarItem(
           label: 'Inventory',
-          icon: Icon(Icons.archive_rounded),
+          icon: FaIcon(FontAwesomeIcons.boxes),
         ),
       ),
       Page(
         ScanPage(bloc: widget.bloc, data: widget.data),
         BottomNavigationBarItem(
           label: 'Scan',
-          icon: Icon(Icons.qr_code_scanner_rounded),
+          icon: FaIcon(FontAwesomeIcons.qrcode),
         ),
       ),
       Page(
         DailyTallyPage(bloc: widget.bloc, data: widget.data, isAll: false),
         BottomNavigationBarItem(
           label: 'Daily Tally',
-          icon: Icon(Icons.receipt_long_rounded),
+          icon: FaIcon(FontAwesomeIcons.edit),
         ),
       ),
     ];

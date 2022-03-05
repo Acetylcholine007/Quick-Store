@@ -84,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                     key: _formKey,
                     child: Column(
                       children: [
+                        Image.asset('assets/images/appLogo.png', width: 150, height: 150),
                         Text('LOG IN', style: theme.textTheme.headline4.copyWith(color: Colors.black, fontWeight: FontWeight.w700)),
                         SizedBox(height: 50),
                         FieldLabel(
@@ -118,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 100),
+                  SizedBox(height: 80),
                   RichText(
                     text: TextSpan(
                       text: 'DO NOT HAVE AN ACCOUNT? ',

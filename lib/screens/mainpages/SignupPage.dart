@@ -103,6 +103,7 @@ class _SignupPageState extends State<SignupPage> {
                     key: _formKey,
                     child: Column(
                       children: [
+                        Image.asset('assets/images/appLogo.png', width: 150, height: 150),
                         Text('SIGN-UP', style: theme.textTheme.headline4.copyWith(color: Colors.black, fontWeight: FontWeight.w700)),
                         SizedBox(height: 50),
                         FieldLabel(

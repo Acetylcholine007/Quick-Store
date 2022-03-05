@@ -4,6 +4,7 @@ import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/components/CellItem.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/models/OrderItem.dart';
+import 'package:quick_store/shared/decorations.dart';
 
 class DailyTallyPage extends StatefulWidget {
   final StoreBloc bloc;
@@ -117,8 +118,7 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
                   builder: (BuildContext context, Widget child) {
                     return Theme(
                       data: ThemeData.light().copyWith(
-                        // primaryColor: const Color(0xFFF2E7E7),
-                        colorScheme: ColorScheme.light(primary: theme.primaryColor),
+                        colorScheme: ColorScheme.light(primary: Color(0xFF459A7C)),
                         buttonTheme: ButtonThemeData(
                             textTheme: ButtonTextTheme.primary
                         ),
@@ -136,7 +136,7 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
                   dateToday = pickedDate.toString().split(' ')[0];
                 });
               });
-            }, child: Text('Pick Date'))
+            }, child: Text('Pick Date'), style: formButtonDecoration)
         )] : <Widget>[]),
       ),
     );

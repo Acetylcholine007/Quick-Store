@@ -115,7 +115,7 @@ class _ScanPageState extends State<ScanPage> {
       child: isProcessing ? SummarySheet(products: productItems, orderHandler: orderHandler, abortHandler: abortHandler) : Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text('Scan QR Code', style: theme.textTheme.headline4),
+          Text('Scan QR Code', style: theme.textTheme.headline4.copyWith(color: Colors.black)),
           Column(
             children: [
               IconButton(

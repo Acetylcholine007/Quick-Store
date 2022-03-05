@@ -272,13 +272,10 @@ class _ItemEditorState extends State<ItemEditor> {
                           style: TextStyle(fontSize: 16)),
                         )
                       ),
-                      TextButton(
+                      ElevatedButton(
                         onPressed: submitHandler,
                         child: Text('SAVE'),
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Color(0xFFC4C4C4)),
-                            foregroundColor: MaterialStateProperty.all(Colors.black)
-                        ),
+                        style: formButtonDecoration,
                       )
                     ],
                   ),

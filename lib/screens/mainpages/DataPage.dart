@@ -60,12 +60,60 @@ class _DataPageState extends State<DataPage> {
             ),
             Divider(thickness: 1, height: 10),
             ElevatedButton(
-                onPressed: () => DataService.ds.clearInventory(context, loadingHandler, widget.bloc),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                      AlertDialog(
+                        title: Text('Clear Inventory Data'),
+                        content: Text('Are you sure you want to delete your inventory data?'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('NO')
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                DataService.ds.clearInventory(context, loadingHandler, widget.bloc);
+                              },
+                              child: Text('YES')
+                          ),
+                        ],
+                      )
+                    );
+                  },
                 child: Text('Clear Inventory Data'),
                 style: formButtonDecoration
             ),
             ElevatedButton(
-                onPressed: () => DataService.ds.clearOrders(context, loadingHandler, widget.bloc),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                      AlertDialog(
+                        title: Text('Clear Orders Data'),
+                        content: Text('Are you sure you want to delete your orders data?'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('NO')
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                DataService.ds.clearOrders(context, loadingHandler, widget.bloc);
+                              },
+                              child: Text('YES')
+                          ),
+                        ],
+                      )
+                  );
+                },
                 child: Text('Clear Orders Data'),
                 style: formButtonDecoration
             ),

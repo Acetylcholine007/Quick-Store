@@ -31,6 +31,7 @@ class _FrontPageState extends State<FrontPage> {
             children: [
               Column(
                 children: [
+                  Image.asset('assets/images/appLogo.png', width: 150, height: 150),
                   Text('QUICK STORE', style: theme.textTheme.headline4.copyWith(color: Colors.black, fontWeight: FontWeight.w700)),
                   Text('INVENTORY', style: theme.textTheme.bodyText1.copyWith(color: Color(0xFF459A7C), fontWeight: FontWeight.w700))
                 ],
