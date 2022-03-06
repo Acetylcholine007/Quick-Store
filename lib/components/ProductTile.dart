@@ -9,6 +9,11 @@ class ProductTile extends StatelessWidget {
   final Product product;
   const ProductTile({Key key, this.product}) : super(key: key);
 
+  DateTime getDateTime(String datetime) {
+    List<int> values = datetime.split('-').map((value) => int.parse(value)).toList();
+    return DateTime(values[0], values[1], values[2]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -23,7 +28,7 @@ class ProductTile extends StatelessWidget {
         badgeContent: Text('Expired', style: TextStyle(color: Colors.white)),
         shape: BadgeShape.square,
         borderRadius: BorderRadius.circular(15),
-        showBadge: true,
+        showBadge: product.expiration != 'None' && getDateTime(product.expiration).isBefore(DateTime.now()),
         position: BadgePosition.topEnd(top: 5, end: 5),
         child: Card(
           elevation: 4,

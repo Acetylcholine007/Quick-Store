@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/components/FieldLabel.dart';
@@ -20,18 +21,17 @@ class ItemEditor extends StatefulWidget {
 class _ItemEditorState extends State<ItemEditor> {
   final _formKey = GlobalKey<FormState>();
   Product product;
-  String expiration = 'None';
-  List<String> expirationChoices = [
-    '1 Day',
-    '1 Week',
-    '1 Month',
-    '1 Year',
-    'None'
-  ];
+  DateTime expiration = DateTime.now();
+  bool withExpiration = false;
+
+  DateTime getDateTime(String datetime) {
+    List<int> values = datetime.split('-').map((value) => int.parse(value)).toList();
+    return DateTime(values[0], values[1], values[2]);
+  }
 
   void submitHandler() async {
     if (_formKey.currentState.validate()) {
-      product.expiration = expiration;
+      product.expiration = withExpiration ? expiration.toString().split(' ')[0] : 'None';
       String result = widget.isNew
           ? await widget.bloc.addProduct(product)
           : await widget.bloc.editProduct(product);
@@ -79,7 +79,7 @@ class _ItemEditorState extends State<ItemEditor> {
     }
   }
 
-  void expireHandler(String value) {
+  void expireHandler(DateTime value) {
     setState(() {
       expiration = value;
     });
@@ -176,6 +176,8 @@ class _ItemEditorState extends State<ItemEditor> {
       product.pid = uuid.v1();
     } else {
       product = widget.product;
+      expiration = widget.product.expiration == 'None' ? DateTime.now() : getDateTime(widget.product.expiration);
+      withExpiration = widget.product.expiration == 'None' ? false : true;
     }
   }
 
@@ -253,18 +255,59 @@ class _ItemEditorState extends State<ItemEditor> {
                           keyboardType: TextInputType.number,
                         ),
                       ),
+                      // FieldLabel(
+                      //   label: 'Expiration',
+                      //   child: DropdownButtonFormField(
+                      //     menuMaxHeight: 500,
+                      //     isExpanded: false,
+                      //     value: expiration,
+                      //     items: expirationChoices.map((String expire) => DropdownMenuItem(
+                      //         value: expire,
+                      //         child: Text(expire, overflow: TextOverflow.ellipsis)
+                      //     )).toList(),
+                      //     onChanged: (value) => expireHandler(value),
+                      //     decoration: searchFieldDecoration,
+                      //   ),
+                      // ),
                       FieldLabel(
                         label: 'Expiration',
-                        child: DropdownButtonFormField(
-                          menuMaxHeight: 500,
-                          isExpanded: false,
-                          value: expiration,
-                          items: expirationChoices.map((String expire) => DropdownMenuItem(
-                              value: expire,
-                              child: Text(expire, overflow: TextOverflow.ellipsis)
-                          )).toList(),
-                          onChanged: (value) => expireHandler(value),
-                          decoration: searchFieldDecoration,
+                        child: Row(
+                          children: [
+                            Switch(value: withExpiration, onChanged: (val) {
+                              setState(() => withExpiration = val);
+                            }),
+                            Expanded(
+                              child: TextButton(
+                                  style: formButtonDecoration.copyWith(
+                                      foregroundColor: MaterialStateProperty.all(withExpiration ? Colors.black : Colors.grey)
+                                  ),
+                                  onPressed: () => withExpiration ? showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(DateTime.now().year + 5),
+                                  builder: (BuildContext context, Widget child) {
+                                    return Theme(
+                                      data: ThemeData.light().copyWith(
+                                        colorScheme: ColorScheme.light(primary: Color(0xFF459A7C)),
+                                        buttonTheme: ButtonThemeData(
+                                            textTheme: ButtonTextTheme.primary
+                                        ),
+                                      ),
+                                      child: child,
+                                    );
+                                  }
+                              ).then((pickedDate) {
+                                if (pickedDate == null) {
+                                  return;
+                                }
+                                setState(() {
+                                  expiration = pickedDate;
+                                });
+                              }) : null, child: Text(withExpiration ? '${DateFormat('MMMM dd, yyyy').format(expiration)}' : 'No Expiration')
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       FieldLabel(
