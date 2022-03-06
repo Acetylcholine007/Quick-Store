@@ -68,7 +68,7 @@ class _ItemEditorState extends State<ItemEditor> {
       final snackBar = SnackBar(
         duration: Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        content: Text('Fill up all the fields'),
+        content: Text('Fill up all the fields correctly'),
         action: SnackBarAction(label: 'OK',
             onPressed: () =>
                 ScaffoldMessenger.of(context)
@@ -219,7 +219,7 @@ class _ItemEditorState extends State<ItemEditor> {
                         child: TextFormField(
                           initialValue: product.name,
                           decoration: formFieldDecoration.copyWith(hintText: 'Product Name'),
-                          validator: (val) => val.isEmpty ? 'Enter Product Name' : null,
+                          validator: (val) => val.isEmpty ? 'Enter Product Name' : RegExp(r'[.,%]').hasMatch(val) ? "Name should not contain '%,;'": null,
                           onChanged: (val) => setState(() => product.name = val),
                         ),
                       ),
@@ -238,7 +238,7 @@ class _ItemEditorState extends State<ItemEditor> {
                         child: TextFormField(
                           initialValue: product.sellingPrice.toString(),
                           decoration: formFieldDecoration.copyWith(hintText: 'Selling Price'),
-                          validator: (val) => val.isEmpty ? 'Enter Selling Price' : null,
+                          validator: (val) => val.isEmpty ? 'Enter Selling Price' : double.parse(val) <= product.originalPrice ? "Selling price should be greater than the original price" : null,
                           onChanged: (val) => setState(() => product.sellingPrice = val == '' ? 0 : double.parse(val)),
                           keyboardType: TextInputType.number,
                         ),

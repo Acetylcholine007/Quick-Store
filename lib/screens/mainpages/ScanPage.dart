@@ -41,7 +41,11 @@ class _ScanPageState extends State<ScanPage> {
             print(e);
           }
           if (product != null) {
-            return ScanResponse(product, 'SUCCESS');
+            if (product.quantity > 0) {
+              return ScanResponse(product, 'SUCCESS');
+            } else {
+              return ScanResponse(null, 'Product is sold out. Check your inventory');
+            }
           } else {
             return ScanResponse(null, 'Product not found on inventory');
           }
@@ -165,11 +169,13 @@ class _ScanPageState extends State<ScanPage> {
                                 if(response.result == 'SUCCESS') {
                                   localSetState(() {
                                     if(localProductItems[response.product.pid] != null) {
-                                      localProductItems[response.product.pid] =
+                                      if(localProductItems[response.product.pid].orderItem.quantity + 1 <= localProductItems[response.product.pid].quantity) {
+                                        localProductItems[response.product.pid] =
                                           ProductItem(
                                               localProductItems[response.product.pid].orderItem.combine(response.product.toOrderItem()),
                                               response.product.quantity
                                           );
+                                      }
                                     } else {
                                       localProductItems[response.product.pid] = ProductItem(
                                           response.product.toOrderItem(),
@@ -215,8 +221,16 @@ class _ScanPageState extends State<ScanPage> {
                                                 style: theme.textTheme.bodyText1,
                                               )
                                           ),
-                                          IconButton(onPressed: () => localSetState(() => localProductItems[productIndex].orderItem.quantity++), icon: Icon(Icons.arrow_drop_up_rounded)),
-                                          IconButton(onPressed: () => localSetState(() => localProductItems[productIndex].orderItem.quantity--), icon: Icon(Icons.arrow_drop_down_rounded)),
+                                          IconButton(onPressed: () => localSetState(() {
+                                            if(localProductItems[productIndex].orderItem.quantity + 1 <= localProductItems[productIndex].quantity) {
+                                              localProductItems[productIndex].orderItem.quantity++;
+                                            }
+                                          }), icon: Icon(Icons.arrow_drop_up_rounded)),
+                                          IconButton(onPressed: () => localSetState(() {
+                                            if(localProductItems[productIndex].orderItem.quantity - 1 >= 0) {
+                                              localProductItems[productIndex].orderItem.quantity--;
+                                            }
+                                          }), icon: Icon(Icons.arrow_drop_down_rounded)),
                                         ],
                                       ),
                                     ),
@@ -239,6 +253,7 @@ class _ScanPageState extends State<ScanPage> {
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                     setState(() {
+                                                      localProductItems.removeWhere((key, value) => value.orderItem.quantity == 0);
                                                       productItems = localProductItems;
                                                       productKeys = productItems.keys.toList();
                                                       isProcessing = true;

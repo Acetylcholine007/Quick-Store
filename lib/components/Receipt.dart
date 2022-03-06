@@ -63,12 +63,14 @@ class Receipt extends StatelessWidget {
             ),
           ),
         ),
+        Divider(thickness: 1, height: 10),
         SummaryTab(datetime: DateTime.now(), products: products.map((key, value) => MapEntry(key, value.toProductData()))),
+        Divider(thickness: 1, height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM')),
             ElevatedButton(onPressed: abortHandler, child: Text('CANCEL')),
+            ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM')),
           ],
         )
       ],

@@ -59,16 +59,20 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: CellItem(content: 'Product', align: TextAlign.center, style: theme.textTheme.bodyText1)
                   ),
                   Expanded(
                     flex: 1,
-                    child: CellItem(content: 'Quantity', align: TextAlign.center, style: theme.textTheme.bodyText1),
+                    child: CellItem(content: 'Qty', align: TextAlign.center, style: theme.textTheme.bodyText1),
                   ),
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: CellItem(content: 'Price', align: TextAlign.center, style: theme.textTheme.bodyText1),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: CellItem(content: 'Profit', align: TextAlign.center, style: theme.textTheme.bodyText1),
                   ),
                 ],
               )
@@ -80,9 +84,10 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 border: TableBorder.all(color: Colors.black, width: 1),
                 columnWidths: const <int, TableColumnWidth>{
-                  0: IntrinsicColumnWidth(flex: 2),
+                  0: IntrinsicColumnWidth(flex: 3),
                   1: IntrinsicColumnWidth(flex: 1),
-                  2: IntrinsicColumnWidth(flex: 1),
+                  2: IntrinsicColumnWidth(flex: 2),
+                  3: IntrinsicColumnWidth(flex: 2),
                 },
                 children: products.entries.map((product) => TableRow(
                   decoration: const BoxDecoration(
@@ -92,6 +97,7 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
                     CellItem(content: product.key, align: TextAlign.left, style: theme.textTheme.bodyText1),
                     CellItem(content: product.value.quantity.toString(), align: TextAlign.left, style: theme.textTheme.bodyText1),
                     CellItem(content: product.value.totalSellingPrice.toStringAsFixed(2), align: TextAlign.left, style: theme.textTheme.bodyText1),
+                    CellItem(content: product.value.totalProfit.toStringAsFixed(2), align: TextAlign.left, style: theme.textTheme.bodyText1),
                   ]
                 )).toList(),
               ),
