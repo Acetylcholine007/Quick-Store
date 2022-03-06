@@ -97,6 +97,13 @@ class StoreBloc {
     return result;
   }
 
+  Future<String> mergeOrders(List<Order> orders) async {
+    String result = '';
+    result = await LocalDatabaseService.db.mergeOrders(orders);
+    getStore();
+    return result;
+  }
+
   Future<bool> getHasProducts() async {
     bool result = false;
     result = await LocalDatabaseService.db.getHasProducts();

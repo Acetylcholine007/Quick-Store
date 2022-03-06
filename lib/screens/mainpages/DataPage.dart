@@ -58,6 +58,11 @@ class _DataPageState extends State<DataPage> {
                 child: Text('Import Orders Data'),
                 style: formButtonDecoration
             ),
+            ElevatedButton(
+                onPressed: () => DataService.ds.importOrders(context, loadingHandler, widget.bloc),
+                child: Text('Merge Orders Data'),
+                style: formButtonDecoration
+            ),
             Divider(thickness: 1, height: 10),
             ElevatedButton(
                 onPressed: () {

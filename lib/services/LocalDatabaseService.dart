@@ -4,7 +4,9 @@ import 'package:quick_store/models/Account.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/models/LoginResponse.dart';
 import 'package:quick_store/models/Order.dart';
+import 'package:quick_store/models/OrderItem.dart';
 import 'package:quick_store/models/Product.dart';
+import 'package:quick_store/models/ProductData.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -271,6 +273,45 @@ class LocalDatabaseService {
     await batch.commit()
         .then((value) => result = 'SUCCESS')
         .catchError((error) => result = error.toString());
+
+    return result;
+  }
+
+  Future<String> mergeOrders(List<Order> orders) async {
+    Database db = await database;
+    String result = '';
+
+    await Future.wait(orders.map((order) async {
+      Order existingOrder = await getOrder(order.oid);
+
+      if(existingOrder == null) {
+        Map<String, ProductData> products = {};
+        List<String> orderItemStrings = order.itemString.split(';').toList();
+
+        orderItemStrings.forEach((itemString) {
+          OrderItem orderItem = OrderItem.fromString(itemString);
+          if(products[orderItem.name] != null) {
+            products[orderItem.name] = products[orderItem.name].combine(
+                ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice)
+            );
+          } else {
+            products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
+          }
+        });
+
+        await Future.forEach(products.entries, (entry) async {
+          Product product = await getProduct(entry.key);
+          await db.rawUpdate('UPDATE products SET quantity = ? WHERE pid = ?', [product.quantity - entry.value.quantity, entry.key]);
+        });
+      }
+    })).then((value) {
+      bool output = value.reduce((value, element) => value && element);
+      if(output) {
+        result = 'SUCCESS';
+      } else {
+        result = 'Orders failed to merge';
+      }
+    }).catchError((err) => result = err.toString());
 
     return result;
   }

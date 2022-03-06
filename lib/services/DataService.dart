@@ -402,4 +402,61 @@ class DataService {
     }
     loadingHandler(false);
   }
+
+  void mergeOrders(BuildContext context, Function loadingHandler, StoreBloc bloc) async {
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('Orders merged and inventory updated'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
+
+    loadingHandler(true);
+    FilePickerResult result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+    );
+
+    try {
+      if (result != null) {
+        PlatformFile file = result.files.first;
+
+        Uint8List bytes = await (new File(file.path)).readAsBytes();
+        DecodingResult decodingResult = await CharsetDetector.autoDecode(bytes);
+
+        var rows =  const CsvToListConverter(allowInvalid: false).convert(decodingResult.string);
+
+        rows.removeAt(0);
+        List<Order> orders = rows.map((row) => Order.fromList(row)).toList();
+
+        if(orders.isNotEmpty) {
+          String result = await bloc.mergeOrders(orders);
+          if(result == 'SUCCESS') {
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            throw 'Failed to merge orders to the database';
+          }
+        } else {
+          throw 'CSV file is empty';
+        }
+      }
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Merge Orders'),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK')
+              )
+            ],
+          )
+      );
+    }
+    loadingHandler(false);
+  }
 }
