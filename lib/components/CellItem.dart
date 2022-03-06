@@ -4,15 +4,20 @@ class CellItem extends StatelessWidget {
   final String content;
   final TextStyle style;
   final TextAlign align;
-  const CellItem({Key key, this.content, this.style, this.align}) : super(key: key);
+  final EdgeInsets padding;
+  const CellItem({
+    Key key,
+    this.content,
+    this.style,
+    this.align,
+    this.padding = const EdgeInsets.symmetric(vertical: 10, horizontal: 8)
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-      child: Center(
-        child: Text(content, textAlign: align, style: style),
-      ),
+      padding: padding,
+      child: Text(content, textAlign: align, style: style, overflow: TextOverflow.ellipsis),
     );
   }
 }

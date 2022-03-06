@@ -65,7 +65,7 @@ class _InventoryPageState extends State<InventoryPage> {
             Expanded(
               child: products.isEmpty ? NoItem(label: 'No Products') : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
+                  maxCrossAxisExtent: 200,
                   childAspectRatio: 1,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10

@@ -47,6 +47,7 @@ dependencies:
   uuid: 3.0.6
   intl: ^0.17.0
   share: ^2.0.1
+  badges: ^2.0.2
 
 
 

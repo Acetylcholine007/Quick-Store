@@ -1,19 +1,21 @@
 class OrderItem {
   String name;
   int quantity;
-  double price;
+  double sellingPrice;
+  double originalPrice;
 
-  OrderItem({this.name, this.quantity, this.price});
+  OrderItem({this.name, this.quantity, this.sellingPrice, this.originalPrice});
 
   OrderItem.fromString(String productString) {
     List<String> components = productString.split('%');
     name = components[0];
     quantity = int.parse(components[1]);
-    price = double.parse(components[2]);
+    sellingPrice = double.parse(components[2]);
+    originalPrice = double.parse(components[3]);
   }
 
   String toDataString() {
-    return '$name%$quantity%$price';
+    return '$name%$quantity%$sellingPrice%$originalPrice';
   }
 
   OrderItem combine(OrderItem item) {
@@ -23,5 +25,7 @@ class OrderItem {
     return this;
   }
 
-  double get totalPrice => price * quantity;
+  double get totalSellingPrice => sellingPrice * quantity;
+
+  double get totalOriginalPrice => originalPrice * quantity;
 }

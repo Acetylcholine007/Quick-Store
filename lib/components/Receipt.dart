@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:quick_store/components/SummaryTab.dart';
 import 'package:quick_store/models/ProductItem.dart';
 
 import 'CellItem.dart';
 
-class SummarySheet extends StatelessWidget {
+class Receipt extends StatelessWidget {
   final Map<String, ProductItem> products;
   final Function orderHandler;
   final Function abortHandler;
-  const SummarySheet({Key key, this.products, this.orderHandler, this.abortHandler}) : super(key: key);
+  const Receipt({Key key, this.products, this.orderHandler, this.abortHandler}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,34 +57,19 @@ class SummarySheet extends StatelessWidget {
                   children: [
                     CellItem(content: product.value.orderItem.name, align: TextAlign.left, style: theme.textTheme.bodyText1),
                     CellItem(content: product.value.orderItem.quantity.toString(), align: TextAlign.left, style: theme.textTheme.bodyText1),
-                    CellItem(content: product.value.orderItem.totalPrice.toStringAsFixed(2), align: TextAlign.left, style: theme.textTheme.bodyText1),
+                    CellItem(content: product.value.orderItem.totalSellingPrice.toStringAsFixed(2), align: TextAlign.left, style: theme.textTheme.bodyText1),
                   ]
               )).toList(),
             ),
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(DateFormat('MM/dd/yy').format(DateTime.now())),
-              Text('Total = ₱ ${
-                  products.isNotEmpty ? products.values.map((i) => i.orderItem.quantity * i.orderItem.price)
-                      .reduce((value, element) => value + element).toStringAsFixed(2) : 0
-              }', style: theme.textTheme.headline6.copyWith(color: Colors.red))
-            ],
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM')),
-              ElevatedButton(onPressed: abortHandler, child: Text('CANCEL')),
-            ],
-          ),
+        SummaryTab(datetime: DateTime.now(), products: products.map((key, value) => MapEntry(key, value.toProductData()))),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM')),
+            ElevatedButton(onPressed: abortHandler, child: Text('CANCEL')),
+          ],
         )
       ],
     );

@@ -22,9 +22,9 @@ class LocalDatabaseService {
         onCreate: (db, version) {
           Batch batch = db.batch();
           batch.execute(
-              'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
+              'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, sellingPrice REAL, quantity INTEGER, expiration TEXT, originalPrice REAL )'
           );
-          batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+          batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT, username TEXT)');
           batch.execute('CREATE TABLE users(uid TEXT PRIMARY KEY, username TEXT, password TEXT, contact TEXT )');
           return batch.commit();
         },
@@ -241,7 +241,7 @@ class LocalDatabaseService {
 
     batch.execute("DROP TABLE IF EXISTS products");
     batch.execute(
-        'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
+        'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, sellingPrice REAL, quantity INTEGER, expiration TEXT, originalPrice REAL )'
     );
 
     products.forEach((product) => batch.insert(
@@ -262,7 +262,7 @@ class LocalDatabaseService {
     Batch batch = db.batch();
 
     batch.execute("DROP TABLE IF EXISTS orders");
-    batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+    batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT, username TEXT)');
     orders.forEach((order) => batch.insert(
         'orders',
         order.toMap(),
@@ -282,7 +282,7 @@ class LocalDatabaseService {
 
     batch.execute("DROP TABLE IF EXISTS products");
     batch.execute(
-        'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, price REAL, quantity INTEGER, expiration TEXT)'
+        'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, sellingPrice REAL, quantity INTEGER, expiration TEXT, originalPrice REAL )'
     );
 
     await batch.commit()
@@ -298,7 +298,7 @@ class LocalDatabaseService {
     Batch batch = db.batch();
 
     batch.execute("DROP TABLE IF EXISTS orders");
-    batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT)');
+    batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT, username TEXT)');
 
     await batch.commit()
         .then((value) => result = 'SUCCESS')

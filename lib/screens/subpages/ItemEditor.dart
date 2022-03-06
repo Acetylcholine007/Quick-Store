@@ -175,19 +175,14 @@ class _ItemEditorState extends State<ItemEditor> {
       product = Product();
       product.pid = uuid.v1();
     } else {
-      product = Product(
-        pid: widget.product.pid,
-        name: widget.product.name,
-        price: widget.product.price,
-        quantity: widget.product.quantity,
-        expiration: widget.product.expiration
-      );
+      product = widget.product;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    print(product.originalPrice);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -229,12 +224,22 @@ class _ItemEditorState extends State<ItemEditor> {
                         ),
                       ),
                       FieldLabel(
-                        label: 'Price',
+                        label: 'Original Price',
                         child: TextFormField(
-                          initialValue: product.price.toString(),
-                          decoration: formFieldDecoration.copyWith(hintText: 'Product Price'),
-                          validator: (val) => val.isEmpty ? 'Enter Product Price' : null,
-                          onChanged: (val) => setState(() => product.price = val == '' ? 0 : double.parse(val)),
+                          initialValue: product.originalPrice.toString(),
+                          decoration: formFieldDecoration.copyWith(hintText: 'Original Price'),
+                          validator: (val) => val.isEmpty ? 'Enter Original Price' : null,
+                          onChanged: (val) => setState(() => product.originalPrice = val == '' ? 0 : double.parse(val)),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      FieldLabel(
+                        label: 'Selling Price',
+                        child: TextFormField(
+                          initialValue: product.sellingPrice.toString(),
+                          decoration: formFieldDecoration.copyWith(hintText: 'Selling Price'),
+                          validator: (val) => val.isEmpty ? 'Enter Selling Price' : null,
+                          onChanged: (val) => setState(() => product.sellingPrice = val == '' ? 0 : double.parse(val)),
                           keyboardType: TextInputType.number,
                         ),
                       ),
@@ -268,7 +273,7 @@ class _ItemEditorState extends State<ItemEditor> {
                           height: 50,
                           padding: EdgeInsets.all(16),
                           decoration: labelFieldDecoration,
-                          child: Text('₱ ${(product.quantity * product.price).toStringAsFixed(2)}',
+                          child: Text('₱ ${(product.quantity * product.sellingPrice).toStringAsFixed(2)}',
                           style: TextStyle(fontSize: 16)),
                         )
                       ),

@@ -20,8 +20,31 @@ class DataService {
 
   static final DataService ds = DataService._();
 
-  cameraPermissionHandler () {
+  Future<bool> cameraPermissionHandler (BuildContext context) async {
+    var status = await Permission.camera.status;
 
+    if (status.isDenied) {
+      await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+        title: Text('Scan QR Code'),
+        content: Text('Scanning QR code requires allowing the app to use the phone\'s camera.'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK')
+          )
+        ],
+      )
+    );
+    await Permission.camera.request();
+    status = await Permission.camera.status;
+    }
+
+    if(status.isGranted) return true;
+    else return false;
   }
 
   Future<bool> writePermissionHandler (BuildContext context) async {
