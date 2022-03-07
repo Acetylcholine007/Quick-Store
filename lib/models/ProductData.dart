@@ -13,8 +13,12 @@ class ProductData {
 
   ProductData combine (ProductData item) {
     this.quantity += item.quantity;
-    this.sellingPrice += item.sellingPrice;
-    this.originalPrice += item.originalPrice;
+    this.sellingPrice = item.sellingPrice;
+    this.originalPrice = item.originalPrice;
     return this;
+  }
+
+  String toString() {
+    return '$quantity $sellingPrice $originalPrice';
   }
 }

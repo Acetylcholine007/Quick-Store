@@ -2,6 +2,7 @@ import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/components/Receipt.dart';
+import 'package:quick_store/models/Account.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/models/Order.dart';
 import 'package:quick_store/models/Product.dart';
@@ -12,8 +13,9 @@ import 'package:uuid/uuid.dart';
 class ScanPage extends StatefulWidget {
   final StoreBloc bloc;
   final LocalDBDataPack data;
+  final Account account;
 
-  const ScanPage({Key key, this.bloc, this.data}) : super(key: key);
+  const ScanPage({Key key, this.bloc, this.data, this.account}) : super(key: key);
 
   @override
   _ScanPageState createState() => _ScanPageState();
@@ -67,9 +69,10 @@ class _ScanPageState extends State<ScanPage> {
     productItems.forEach((key, value) => newQuantity[key] = value.quantity - value.orderItem.quantity);
 
     Order order = Order(
-        oid: uuid.v1(),
-        datetime: DateTime.now().toString(),
-        itemString: orderItemStrings.reduce((value, element) => '${value};$element')
+      oid: uuid.v1(),
+      datetime: DateTime.now().toString(),
+      itemString: orderItemStrings.reduce((value, element) => '${value};$element'),
+      username: widget.account.username
     );
 
     String result = await widget.bloc.addOrder(order, newQuantity);

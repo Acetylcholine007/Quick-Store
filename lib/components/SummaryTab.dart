@@ -12,9 +12,6 @@ class SummaryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    products.values.forEach((el) => print(el.quantity));
-
-    print(products.values.map((i) => i.totalSellingPrice).reduce((value, element) => value + element).toStringAsFixed(2));
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

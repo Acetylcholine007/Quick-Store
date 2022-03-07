@@ -10,7 +10,6 @@ import 'package:quick_store/screens/mainpages/HelpPage.dart';
 import 'package:quick_store/screens/mainpages/HistoryPage.dart';
 import 'package:quick_store/screens/mainpages/InventoryPage.dart';
 import 'package:quick_store/screens/mainpages/ScanPage.dart';
-import 'package:quick_store/screens/mainpages/SettingsPage.dart';
 import 'package:quick_store/services/DataService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -88,7 +87,7 @@ class _MainWrapperState extends State<MainWrapper> {
         ),
       ),
       Page(
-        ScanPage(bloc: widget.bloc, data: widget.data),
+        ScanPage(bloc: widget.bloc, data: widget.data, account: widget.account),
         BottomNavigationBarItem(
           label: 'Scan',
           icon: FaIcon(FontAwesomeIcons.qrcode),
@@ -144,26 +143,6 @@ class _MainWrapperState extends State<MainWrapper> {
                 },
               ),
               ListTile(
-                title: Text('Help', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HelpPage()),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text('Settings', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-              ),
-              ListTile(
                 title: Text('Print QR Codes', style: TextStyle(color: Colors.white)),
                 onTap: qrDownloadHandler,
               ),
@@ -176,6 +155,16 @@ class _MainWrapperState extends State<MainWrapper> {
                     MaterialPageRoute(builder: (context) => DataPage(bloc: widget.bloc, data: widget.data)),
                   );
                 }
+              ),
+              ListTile(
+                title: Text('Help', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpPage()),
+                  );
+                },
               ),
               Divider(thickness: 1, height: 10, color: Colors.white, indent: 16, endIndent: 16),
               ListTile(

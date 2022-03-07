@@ -37,9 +37,13 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
       orderItemStrings.forEach((itemString) {
         OrderItem orderItem = OrderItem.fromString(itemString);
         if(products[orderItem.name] != null) {
-          products[orderItem.name] = products[orderItem.name].combine(
-              ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice)
-          );
+          if(products[orderItem.name].sellingPrice == orderItem.sellingPrice && products[orderItem.name].originalPrice == orderItem.originalPrice) {
+            products[orderItem.name] = products[orderItem.name].combine(
+                ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice)
+            );
+          } else {
+            products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
+          }
         } else {
           products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
         }

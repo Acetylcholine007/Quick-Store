@@ -6,14 +6,20 @@ import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_charset_detector/flutter_charset_detector.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/models/Order.dart';
+import 'package:quick_store/models/OrderItem.dart';
 import 'package:quick_store/models/Product.dart';
+import 'package:quick_store/models/ProductData.dart';
 import 'package:share/share.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class DataService {
   DataService._();
@@ -457,6 +463,289 @@ class DataService {
           )
       );
     }
+    loadingHandler(false);
+  }
+
+  void printOrderToPDF(BuildContext context, Function loadingHandler, List<Order> orders) async {
+    final pdf = pw.Document();
+
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('PDF report generated'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
+    final snackBar2 = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('Saving cancelled'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
+
+    void printPDFPage(DateTime indexDay, Map<String, ProductData> products, {bool isMonth = false}) {
+      pdf.addPage(
+          pw.Page(
+              pageFormat: PdfPageFormat.a4,
+              build: (pw.Context context) {
+                return pw.Container(
+                    padding: pw.EdgeInsets.all(8),
+                    child: pw.Column(
+                        children: [
+                          isMonth ? pw.Text('Tally for the month of ${DateFormat('MMMM').format(indexDay)}', style: pw.TextStyle(
+                            fontSize: 16,
+                            fontWeight: pw.FontWeight.bold
+                          )) : pw.Text('${DateFormat('MMMM dd, yyyy').format(indexDay)} Tally', style: pw.TextStyle(
+                                fontSize: 16,
+                                fontWeight: pw.FontWeight.bold
+                              )),
+                          pw.SizedBox(height: 20),
+                          pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Padding(
+                                  padding: const pw.EdgeInsets.all(2),
+                                  child: pw.Text('Product', textAlign: pw.TextAlign.center, overflow: pw.TextOverflow.clip),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 1,
+                                child: pw.Padding(
+                                  padding: const pw.EdgeInsets.all(2),
+                                  child: pw.Text('Qty', textAlign: pw.TextAlign.center, overflow: pw.TextOverflow.clip),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Padding(
+                                  padding: const pw.EdgeInsets.all(2),
+                                  child: pw.Text('Selling Price', textAlign: pw.TextAlign.center, overflow: pw.TextOverflow.clip),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Padding(
+                                  padding: const pw.EdgeInsets.all(2),
+                                  child: pw.Text('Profit', textAlign: pw.TextAlign.center, overflow: pw.TextOverflow.clip),
+                                ),
+                              ),
+                            ],
+                          ),
+                          pw.Expanded(
+                            flex: 1,
+                              child: products.isNotEmpty ? pw.Table(
+                                defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+                                border: pw.TableBorder.all(color: PdfColors.black, width: 1),
+                                columnWidths: const <int, pw.TableColumnWidth>{
+                                  0: pw.IntrinsicColumnWidth(flex: 3),
+                                  1: pw.IntrinsicColumnWidth(flex: 1),
+                                  2: pw.IntrinsicColumnWidth(flex: 2),
+                                  3: pw.IntrinsicColumnWidth(flex: 2),
+                                },
+                                children: products.entries.map((product) => pw.TableRow(
+                                    decoration: const pw.BoxDecoration(
+                                      color: PdfColors.white,
+                                    ),
+                                    children: [
+                                      pw.Padding(
+                                        padding: const pw.EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                        child: pw.Text(product.key, textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                      ),
+                                      pw.Padding(
+                                        padding: const pw.EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                        child: pw.Text(product.value.quantity.toString(), textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                      ),
+                                      pw.Padding(
+                                        padding: const pw.EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                        child: pw.Text(product.value.totalSellingPrice.toStringAsFixed(2), textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                      ),
+                                      pw.Padding(
+                                        padding: const pw.EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                        child: pw.Text(product.value.totalProfit.toStringAsFixed(2), textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                      ),
+                                    ]
+                                )).toList(),
+                              ) : pw.Center(child: pw.Text('No Orders at the month of \n${DateFormat('MMMM').format(indexDay)}', textAlign: pw.TextAlign.center))
+                          ),
+                          pw.Divider(thickness: 1, height: 20, color: PdfColors.grey),
+                          pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.center,
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                            children: [
+                              pw.Expanded(
+                                  flex: 1,
+                                  child: pw.Center(child: pw.Text('${DateFormat('MM/dd/yy').format(indexDay)}\nSummary'))
+                              ),
+                              pw.Expanded(
+                                flex:2,
+                                child: pw.Table(
+                                  defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+                                  border: pw.TableBorder(horizontalInside: pw.BorderSide(width: 1)),
+                                  columnWidths: const <int, pw.TableColumnWidth>{
+                                    0: pw.IntrinsicColumnWidth(flex: 1),
+                                    1: pw.IntrinsicColumnWidth(flex: 2)
+                                  },
+                                  children: [
+                                    pw.TableRow(
+                                      children: [
+                                        pw.Padding(
+                                          padding: const pw.EdgeInsets.all(2),
+                                          child: pw.Text('Revenue', textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                        ),
+                                        pw.Padding(
+                                          padding: const pw.EdgeInsets.all(2),
+                                          child: pw.Text('Php ${
+                                              products.isNotEmpty ? products.values.map((i) => i.totalSellingPrice).reduce((value, element) => value + element).toStringAsFixed(2) : 0
+                                          }', textAlign: pw.TextAlign.right, overflow: pw.TextOverflow.clip),
+                                        ),
+                                      ]
+                                    ),
+                                    pw.TableRow(
+                                        children: [
+                                          pw.Padding(
+                                            padding: const pw.EdgeInsets.all(2),
+                                            child: pw.Text('Capital', textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                          ),
+                                          pw.Padding(
+                                            padding: const pw.EdgeInsets.all(2),
+                                            child: pw.Text('Php ${
+                                                products.isNotEmpty ? products.values.map((i) => i.totalOriginalPrice).reduce((value, element) => value + element).toStringAsFixed(2) : 0
+                                            }', textAlign: pw.TextAlign.right, overflow: pw.TextOverflow.clip),
+                                          ),
+                                        ]
+                                    ),
+                                    pw.TableRow(
+                                        children: [
+                                          pw.Padding(
+                                            padding: const pw.EdgeInsets.all(2),
+                                            child: pw.Text('Net Profit', textAlign: pw.TextAlign.left, overflow: pw.TextOverflow.clip),
+                                          ),
+                                          pw.Padding(
+                                            padding: const pw.EdgeInsets.all(2),
+                                            child: pw.Text('Php ${
+                                                products.isNotEmpty ? products.values.map((i) => i.totalProfit).reduce((value, element) => value + element).toStringAsFixed(2) : 0
+                                            }', textAlign: pw.TextAlign.right, overflow: pw.TextOverflow.clip),
+                                          ),
+                                        ]
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                        ]
+                    )
+                ); // Center
+              }
+          )
+      );
+    }
+
+    loadingHandler(true);
+
+    try {
+      for (DateTime indexDay = DateTime(2022,3,1);
+      indexDay.month == 3;
+      indexDay = indexDay.add(Duration(days:1))) {
+        String dateToday = indexDay.toString().split(' ')[0];
+        Map<String, ProductData> products = {};
+
+        orders.where((order) => order.datetime.split(' ')[0] == dateToday).forEach((order) {
+          List<String> orderItemStrings = order.itemString.split(';').toList();
+
+          orderItemStrings.forEach((itemString) {
+            OrderItem orderItem = OrderItem.fromString(itemString);
+            if(products[orderItem.name] != null) {
+              if(products[orderItem.name].sellingPrice == orderItem.sellingPrice && products[orderItem.name].originalPrice == orderItem.originalPrice) {
+                products[orderItem.name] = products[orderItem.name].combine(
+                    ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice)
+                );
+              } else {
+                products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
+              }
+            } else {
+              products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
+            }
+          });
+        });
+
+        if(products.isNotEmpty) {
+          printPDFPage(indexDay, products);
+        }
+      }
+
+      Map<String, ProductData> products = {};
+
+      orders.forEach((order) {
+        List<String> orderItemStrings = order.itemString.split(';').toList();
+
+        orderItemStrings.forEach((itemString) {
+          OrderItem orderItem = OrderItem.fromString(itemString);
+          if(products[orderItem.name] != null) {
+            if(products[orderItem.name].sellingPrice == orderItem.sellingPrice && products[orderItem.name].originalPrice == orderItem.originalPrice) {
+              products[orderItem.name] = products[orderItem.name].combine(
+                  ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice)
+              );
+            } else {
+              products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
+            }
+          } else {
+            products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
+          }
+        });
+      });
+
+      printPDFPage(DateTime.now(), products, isMonth: true);
+
+      String directory  = (await getTemporaryDirectory()).path;
+      final path = "$directory/${DateFormat('MMMM').format(DateTime.now())}_Report_${DateTime.now().toString()}.pdf";
+      final File file = File(path);
+
+      File pdfFile = await file.writeAsBytes(await pdf.save());
+
+      if(pdfFile != null) {
+        final params = SaveFileDialogParams(sourceFilePath: pdfFile.path);
+        final filePath = await FlutterFileDialog.saveFile(params: params);
+        if(filePath != null)
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(snackBar2);
+        }
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('PDF generation'),
+              content: Text('PDF not saved'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK')
+                )
+              ],
+            )
+        );
+      }
+    } catch(e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Generate Report'),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK')
+              )
+            ],
+          )
+      );
+    }
+
     loadingHandler(false);
   }
 }

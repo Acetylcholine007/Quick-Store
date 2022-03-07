@@ -47,6 +47,11 @@ class _DataPageState extends State<DataPage> {
                 child: Text('Export Orders Data'),
                 style: formButtonDecoration
             ),
+            ElevatedButton(
+                onPressed: () => DataService.ds.printOrderToPDF(context, loadingHandler, widget.data.orders),
+                child: Text('Generate PDF Report'),
+                style: formButtonDecoration
+            ),
             Divider(thickness: 1, height: 10),
             ElevatedButton(
                 onPressed: () => DataService.ds.importInventory(context, loadingHandler, widget.bloc),
