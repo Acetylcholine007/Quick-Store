@@ -467,6 +467,8 @@ class DataService {
         var rows =  const CsvToListConverter(allowInvalid: false).convert(decodingResult.string);
 
         rows.removeAt(0);
+
+        rows.forEach((element) => print(element));
         List<Order> orders = rows.map((row) => Order.fromList(row)).toList();
 
         if(orders.isNotEmpty) {

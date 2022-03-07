@@ -41,7 +41,7 @@ class Product {
   }
 
   OrderItem toOrderItem() {
-    return OrderItem(name: this.name, quantity: 1, sellingPrice: this.sellingPrice, originalPrice: this.originalPrice);
+    return OrderItem(pid: this.pid, name: this.name, quantity: 1, sellingPrice: this.sellingPrice, originalPrice: this.originalPrice);
   }
 
   List<String> toStringList() {

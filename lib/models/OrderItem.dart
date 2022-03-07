@@ -1,25 +1,27 @@
 class OrderItem {
+  String pid;
   String name;
   int quantity;
   double sellingPrice;
   double originalPrice;
 
-  OrderItem({this.name, this.quantity, this.sellingPrice, this.originalPrice});
+  OrderItem({this.pid, this.name, this.quantity, this.sellingPrice, this.originalPrice});
 
   OrderItem.fromString(String productString) {
     List<String> components = productString.split('%');
-    name = components[0];
-    quantity = int.parse(components[1]);
-    sellingPrice = double.parse(components[2]);
-    originalPrice = double.parse(components[3]);
+    pid = components[0];
+    name = components[1];
+    quantity = int.parse(components[2]);
+    sellingPrice = double.parse(components[3]);
+    originalPrice = double.parse(components[4]);
   }
 
   String toDataString() {
-    return '$name%$quantity%$sellingPrice%$originalPrice';
+    return '$pid%$name%$quantity%$sellingPrice%$originalPrice';
   }
 
   OrderItem combine(OrderItem item) {
-    if(this.name == item.name) {
+    if(this.pid == item.pid) {
       this.quantity += item.quantity;
     }
     return this;

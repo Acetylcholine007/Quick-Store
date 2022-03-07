@@ -120,7 +120,7 @@ class _MainWrapperState extends State<MainWrapper> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Quick Shop',
+                      'Quick Store',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 28,

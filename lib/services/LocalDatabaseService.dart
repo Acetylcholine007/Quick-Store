@@ -6,7 +6,6 @@ import 'package:quick_store/models/LoginResponse.dart';
 import 'package:quick_store/models/Order.dart';
 import 'package:quick_store/models/OrderItem.dart';
 import 'package:quick_store/models/Product.dart';
-import 'package:quick_store/models/ProductData.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -167,6 +166,21 @@ class LocalDatabaseService {
     return Product.fromLocalDB(maps[0]);
   }
 
+  Future<Product> getProductByName(String name) async {
+    Database db = await database;
+    List<Map<String, Object>> maps = await db.query(
+        'products',
+        where: 'name = ?',
+        whereArgs: [name],
+        limit: 1
+    );
+
+    if(maps == null || maps.isEmpty)
+      return null;
+
+    return Product.fromLocalDB(maps[0]);
+  }
+
   Future<Order> getOrder(String oid) async {
     Database db = await database;
     List<Map<String, Object>> maps = await db.query(
@@ -278,33 +292,36 @@ class LocalDatabaseService {
   }
 
   Future<String> mergeOrders(List<Order> orders) async {
-    Database db = await database;
     String result = '';
 
     await Future.wait(orders.map((order) async {
       Order existingOrder = await getOrder(order.oid);
 
-      if(existingOrder == null) {
-        Map<String, ProductData> products = {};
-        List<String> orderItemStrings = order.itemString.split(';').toList();
+      try {
+        if(existingOrder == null) {
+          Map<String, int> newQuantity = {};
+          List<String> orderItemStrings = order.itemString.split(';').toList();
+          print(orderItemStrings);
 
-        orderItemStrings.forEach((itemString) {
-          OrderItem orderItem = OrderItem.fromString(itemString);
-          if(products[orderItem.name] != null) {
-            products[orderItem.name] = products[orderItem.name].combine(
-                ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice)
-            );
-          } else {
-            products[orderItem.name] = ProductData(orderItem.quantity, orderItem.sellingPrice, orderItem.originalPrice);
-          }
-        });
+          await Future.forEach(orderItemStrings, (itemString) async {
+            OrderItem orderItem = OrderItem.fromString(itemString);
+            Product product = await getProduct(orderItem.pid);
 
-        await Future.forEach(products.entries, (entry) async {
-          Product product = await getProduct(entry.key);
-          await db.rawUpdate('UPDATE products SET quantity = ? WHERE pid = ?', [product.quantity - entry.value.quantity, entry.key]);
-        });
+            newQuantity[orderItem.pid] = product.quantity - orderItem.quantity;
+          });
+
+          print(newQuantity);
+
+          await addOrder(order, newQuantity);
+        }
+        return true;
+      } catch(e) {
+        print(e);
+        return false;
       }
+
     })).then((value) {
+      print(value);
       bool output = value.reduce((value, element) => value && element);
       if(output) {
         result = 'SUCCESS';
