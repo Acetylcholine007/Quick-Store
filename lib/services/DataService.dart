@@ -87,6 +87,40 @@ class DataService {
     );
   }
 
+  Future<List<File>> downloadQRCodes(List<Product> products) async {
+    List<File> imageFiles = [];
+    await Future.forEach(products, (product) async {
+      final qrValidationResult = QrValidator.validate(
+        data: product.pid + '<=QuickStore=>' + product.pid,
+        version: QrVersions.auto,
+        errorCorrectionLevel: QrErrorCorrectLevel.L,
+      );
+
+      final qrCode = qrValidationResult.qrCode;
+
+      final painter = QrPainter.withQr(
+        qr: qrCode,
+        color: const Color(0xFF000000),
+        emptyColor: Colors.white,
+        gapless: true,
+        embeddedImageStyle: null,
+        embeddedImage: null,
+      );
+
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = tempDir.path;
+      String path = '$tempPath/${product.name}.png';
+
+      final picData = await painter.toImageData(256,
+          format: ui.ImageByteFormat.png);
+      await writeToFile(picData, path);
+
+      imageFiles.add(File(path));
+    });
+
+    return imageFiles;
+  }
+
   Future<bool> downloadQRImage(BuildContext context, Product product) async {
     final qrValidationResult = QrValidator.validate(
       data: product.pid + '<=QuickStore=>' + product.pid,
@@ -109,7 +143,7 @@ class DataService {
     String tempPath = tempDir.path;
     String path = '$tempPath/${product.name}.png';
 
-    final picData = await painter.toImageData(2048,
+    final picData = await painter.toImageData(256,
         format: ui.ImageByteFormat.png);
     await writeToFile(picData, path);
 
@@ -642,10 +676,10 @@ class DataService {
     }
 
     loadingHandler(true);
-
+    DateTime dateToday = DateTime.now();
     try {
-      for (DateTime indexDay = DateTime(2022,3,1);
-      indexDay.month == 3;
+      for (DateTime indexDay = DateTime(dateToday.year,dateToday.month,1);
+      indexDay.month == dateToday.month;
       indexDay = indexDay.add(Duration(days:1))) {
         String dateToday = indexDay.toString().split(' ')[0];
         Map<String, ProductData> products = {};
@@ -698,7 +732,7 @@ class DataService {
       printPDFPage(DateTime.now(), products, isMonth: true);
 
       String directory  = (await getTemporaryDirectory()).path;
-      final path = "$directory/${DateFormat('MMMM').format(DateTime.now())}_Report_${DateTime.now().toString()}.pdf";
+      final path = "$directory/${DateFormat('MMMM').format(dateToday)}_Report_${dateToday.toString()}.pdf";
       final File file = File(path);
 
       File pdfFile = await file.writeAsBytes(await pdf.save());
@@ -746,6 +780,105 @@ class DataService {
       );
     }
 
+    loadingHandler(false);
+  }
+
+  void printQRCodes(BuildContext context, Function loadingHandler, List<Product> products) async {
+    print(products);
+
+    final pdf = pw.Document();
+
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('QR codes generated'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
+    final snackBar2 = SnackBar(
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text('Saving cancelled'),
+      action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    );
+
+    int pageCapacity = 20;
+    int columns = 4;
+
+    loadingHandler(true);
+    List<Product> subProducts (List<Product> products, int start, int sliceLength) {
+      List<Product> newProducts;
+      if(start + sliceLength < products.length) {
+        newProducts = products.sublist(start, start + sliceLength);
+      } else {
+        newProducts = products.sublist(start);
+      }
+
+      return newProducts;
+    }
+
+    List<File> imageFiles = await DataService.ds.downloadQRCodes(products);
+
+    print((products.length / pageCapacity).floor() + 1);
+    for(int page = 0; page < (products.length / pageCapacity).floor() + 1; page++) {
+      print('Page: $page');
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return pw.Container(
+              padding: pw.EdgeInsets.all(4),
+              child: pw.GridView(
+                crossAxisCount: columns,
+                children: subProducts(products, page * pageCapacity, pageCapacity).asMap().entries.map((productEntry) => pw.Column(
+                  children: [
+                    pw.Image(
+                      pw.MemoryImage(
+                        imageFiles[page * pageCapacity + productEntry.key].readAsBytesSync(),
+                      ),
+                      width: 80,
+                      height: 80,
+                    ),
+                    pw.Text(productEntry.value.name, style: pw.TextStyle(fontSize: 12))
+                  ]
+                )).toList()
+              )
+            );
+          }
+        )
+      );
+    }
+
+    String directory  = (await getTemporaryDirectory()).path;
+    final path = "$directory/QuickStore_QR_Codes_${DateTime.now().toString()}.pdf";
+    final File file = File(path);
+
+    File pdfFile = await file.writeAsBytes(await pdf.save());
+
+    if(pdfFile != null) {
+      final params = SaveFileDialogParams(sourceFilePath: pdfFile.path);
+      final filePath = await FlutterFileDialog.saveFile(params: params);
+      if(filePath != null)
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(snackBar2);
+      }
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('QR Code Printing'),
+            content: Text('QR codes not saved'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK')
+              )
+            ],
+          )
+      );
+    }
     loadingHandler(false);
   }
 }

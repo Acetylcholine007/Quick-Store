@@ -29,6 +29,10 @@ class _DataPageState extends State<DataPage> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
+        bottom: isLoading ? PreferredSize(
+            preferredSize: Size(double.infinity, 1.0),
+            child: LinearProgressIndicator(backgroundColor: Color(0xFF459A7C))
+        ) : null,
       ),
       body: Container(
         padding: EdgeInsets.all(16),
@@ -50,6 +54,11 @@ class _DataPageState extends State<DataPage> {
             ElevatedButton(
                 onPressed: () => DataService.ds.printOrderToPDF(context, loadingHandler, widget.data.orders),
                 child: Text('Generate PDF Report'),
+                style: formButtonDecoration
+            ),
+            ElevatedButton(
+                onPressed: () => DataService.ds.printQRCodes(context, loadingHandler, widget.data.products),
+                child: Text('Print QR codes'),
                 style: formButtonDecoration
             ),
             Divider(thickness: 1, height: 10),

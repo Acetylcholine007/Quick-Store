@@ -143,7 +143,7 @@ class _MainWrapperState extends State<MainWrapper> {
                 },
               ),
               ListTile(
-                title: Text('Print QR Codes', style: TextStyle(color: Colors.white)),
+                title: Text('Download QR Codes', style: TextStyle(color: Colors.white)),
                 onTap: qrDownloadHandler,
               ),
               ListTile(
