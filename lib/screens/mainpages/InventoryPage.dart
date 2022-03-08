@@ -20,8 +20,13 @@ class InventoryPage extends StatefulWidget {
 class _InventoryPageState extends State<InventoryPage> {
   String query = '';
   TextEditingController controller = TextEditingController();
+  int productState = 1;
   
   List<Product> filterProductHandler(List<Product> products) {
+    if(productState == 2) {
+      products = products.where((product) => product.isExpired()).toList();
+    }
+
     if(query == '') {
       return products;
     } else {
@@ -30,11 +35,18 @@ class _InventoryPageState extends State<InventoryPage> {
       ).toList();
     }
   }
+
+  List<Product> sortProducts(List<Product> products) {
+    products.sort((a, b) {
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    return products;
+  }
   
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final products = filterProductHandler(widget.data.products);
+    final products = sortProducts(filterProductHandler(widget.data.products));
 
     return Scaffold(
       backgroundColor: Color(0xFFF2E7E7),
@@ -43,10 +55,31 @@ class _InventoryPageState extends State<InventoryPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-                'INVENTORY',
-                textAlign: TextAlign.left,
-                style: theme.textTheme.headline4.copyWith(color: Colors.black)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'INVENTORY',
+                  textAlign: TextAlign.left,
+                  style: theme.textTheme.headline4.copyWith(color: Colors.black)
+                ),
+                Row(
+                  children: [
+                    Row(
+                      children: [
+                        Radio(value: 1, groupValue: productState, onChanged: (value) {setState(() {productState = value;});}),
+                        Text('All')
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Radio(value: 2, groupValue: productState, onChanged: (value) {setState(() {productState = value;});}),
+                        Text('Expired')
+                      ],
+                    ),
+                  ],
+                )
+              ],
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8,  20, 16),

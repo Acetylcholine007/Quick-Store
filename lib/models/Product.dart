@@ -40,6 +40,15 @@ class Product {
     };
   }
 
+  DateTime getDateTime(String datetime) {
+    List<int> values = datetime.split('-').map((value) => int.parse(value)).toList();
+    return DateTime(values[0], values[1], values[2]);
+  }
+
+  bool isExpired() {
+    return this.expiration != 'None' && getDateTime(this.expiration).isBefore(DateTime.now());
+  }
+
   OrderItem toOrderItem() {
     return OrderItem(pid: this.pid, name: this.name, quantity: 1, sellingPrice: this.sellingPrice, originalPrice: this.originalPrice);
   }
