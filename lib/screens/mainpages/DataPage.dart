@@ -25,7 +25,7 @@ class _DataPageState extends State<DataPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.primaryColorLight,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Data Management'),
         bottom: isLoading ? PreferredSize(

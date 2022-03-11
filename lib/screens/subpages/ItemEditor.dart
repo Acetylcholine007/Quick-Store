@@ -216,7 +216,7 @@ class _ItemEditorState extends State<ItemEditor> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: theme.primaryColorLight,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(widget.isNew ? 'Create Product' : 'Edit Product'),
           actions: [

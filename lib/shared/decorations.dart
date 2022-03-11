@@ -38,7 +38,7 @@ BoxDecoration labelFieldDecoration = BoxDecoration(
 
 ShapeDecoration fieldContainerDecoration = ShapeDecoration(
   gradient: LinearGradient(
-    colors: [Color(0xFFe6dfd8), Color(0xFFf7f5ec)],
+    colors: [Color(0xffdce6d8), Color(0xffe6f7dc)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     stops: [0.0, 0.4],

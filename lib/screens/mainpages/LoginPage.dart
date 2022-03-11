@@ -68,8 +68,11 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: theme.primaryColorLight,
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: theme.primaryColorDark, //change your color here
+          ),
           elevation: 0.0,
           backgroundColor: Colors.transparent,
         ),

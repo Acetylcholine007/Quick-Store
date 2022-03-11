@@ -12,16 +12,7 @@ class MyApp extends StatelessWidget {
   final theme = ThemeData(
       fontFamily: 'Poppins',
       primarySwatch: Colors.green,
-      // primaryTextTheme: Typography().black,
       textTheme: Typography().black.copyWith(bodyText1: TextStyle(fontSize: 16)),
-      // textSelectionTheme: TextSelectionThemeData(
-      //   cursorColor: Colors.black,
-      // ),
-      // textButtonTheme: TextButtonThemeData(// Background color (orange in my case).
-      //   style: TextButton.styleFrom(
-      //     primary: Color(0xFF459A7C),
-      //   ),// Text color
-      // )
   );
 
   @override

@@ -20,7 +20,7 @@ class _HistoryPageState extends State<HistoryPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.primaryColorLight,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('History Page'),
       ),

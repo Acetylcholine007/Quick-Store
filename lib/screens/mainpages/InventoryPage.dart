@@ -73,7 +73,7 @@ class _InventoryPageState extends State<InventoryPage> {
     final products = sortProducts(filterProductHandler(widget.data.products));
 
     return Scaffold(
-      backgroundColor: theme.primaryColorLight,
+      backgroundColor: Colors.white,
       body: Container(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
         child: Column(

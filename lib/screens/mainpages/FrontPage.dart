@@ -22,7 +22,7 @@ class _FrontPageState extends State<FrontPage> {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
       ),
-      backgroundColor: theme.primaryColorLight,
+      backgroundColor: Colors.white,
       body: Container(
         padding: const EdgeInsets.all(24),
         child: Center(

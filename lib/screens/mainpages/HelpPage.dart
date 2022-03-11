@@ -13,7 +13,7 @@ class _HelpPageState extends State<HelpPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.primaryColorLight,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Help Page'),
       ),
