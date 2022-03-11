@@ -216,10 +216,9 @@ class _ItemEditorState extends State<ItemEditor> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: Color(0xFFF2E7E7),
+        backgroundColor: theme.primaryColorLight,
         appBar: AppBar(
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
+          title: Text(widget.isNew ? 'Create Product' : 'Edit Product'),
           actions: [
             IconButton(onPressed: downloadHandler, icon: Icon(Icons.download_rounded)),
           ] + (widget.isNew ? [] : [
@@ -282,21 +281,8 @@ class _ItemEditorState extends State<ItemEditor> {
                           keyboardType: TextInputType.number,
                         ),
                       ),
-                      // FieldLabel(
-                      //   label: 'Expiration',
-                      //   child: DropdownButtonFormField(
-                      //     menuMaxHeight: 500,
-                      //     isExpanded: false,
-                      //     value: expiration,
-                      //     items: expirationChoices.map((String expire) => DropdownMenuItem(
-                      //         value: expire,
-                      //         child: Text(expire, overflow: TextOverflow.ellipsis)
-                      //     )).toList(),
-                      //     onChanged: (value) => expireHandler(value),
-                      //     decoration: searchFieldDecoration,
-                      //   ),
-                      // ),
                       FieldLabel(
+                        sunken: false,
                         label: 'Expiration',
                         child: Row(
                           children: [
@@ -304,26 +290,13 @@ class _ItemEditorState extends State<ItemEditor> {
                               setState(() => withExpiration = val);
                             }),
                             Expanded(
-                              child: TextButton(
-                                  style: formButtonDecoration.copyWith(
-                                      foregroundColor: MaterialStateProperty.all(withExpiration ? Colors.black : Colors.grey)
-                                  ),
+                              child: ElevatedButton(
+                                  style: formButtonDecoration,
                                   onPressed: () => withExpiration ? showDatePicker(
                                   context: context,
                                   initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
+                                  firstDate: DateTime.now().subtract(Duration(days: 7)),
                                   lastDate: DateTime(DateTime.now().year + 5),
-                                  builder: (BuildContext context, Widget child) {
-                                    return Theme(
-                                      data: ThemeData.light().copyWith(
-                                        colorScheme: ColorScheme.light(primary: Color(0xFF459A7C)),
-                                        buttonTheme: ButtonThemeData(
-                                            textTheme: ButtonTextTheme.primary
-                                        ),
-                                      ),
-                                      child: child,
-                                    );
-                                  }
                               ).then((pickedDate) {
                                 if (pickedDate == null) {
                                   return;
@@ -337,15 +310,34 @@ class _ItemEditorState extends State<ItemEditor> {
                           ],
                         ),
                       ),
-                      FieldLabel(
-                        label: 'Total Price',
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.all(16),
-                          decoration: labelFieldDecoration,
-                          child: Text('₱ ${(product.quantity * product.sellingPrice).toStringAsFixed(2)}',
-                          style: TextStyle(fontSize: 16)),
-                        )
+                      Row(
+                        children: [
+                          Expanded(
+                            child: FieldLabel(
+                              label: 'Revenue',
+                              child: Container(
+                                height: 50,
+                                padding: EdgeInsets.all(16),
+                                decoration: labelFieldDecoration.copyWith(color: theme.backgroundColor),
+                                child: Text('₱ ${(product.quantity * product.sellingPrice).toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 16)),
+                              )
+                            ),
+                          ),
+                          SizedBox(width: 16,),
+                          Expanded(
+                            child: FieldLabel(
+                                label: 'Profit',
+                                child: Container(
+                                  height: 50,
+                                  padding: EdgeInsets.all(16),
+                                  decoration: labelFieldDecoration.copyWith(color: theme.backgroundColor),
+                                  child: Text('₱ ${(product.quantity * (product.sellingPrice - product.originalPrice)).toStringAsFixed(2)}',
+                                      style: TextStyle(fontSize: 16)),
+                                )
+                            ),
+                          ),
+                        ],
                       ),
                       ElevatedButton(
                         onPressed: submitHandler,

@@ -75,6 +75,19 @@ class _MainWrapperState extends State<MainWrapper> {
     }
   }
 
+  String getAppbarTitle() {
+    switch (_currentIndex) {
+      case 0:
+        return 'Inventory Page';
+      case 1:
+        return 'Scan Page';
+      case 2:
+        return 'Daily Tally Page';
+      default:
+        return 'Quick Store';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -106,14 +119,14 @@ class _MainWrapperState extends State<MainWrapper> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: Color(0xFFF2E7E7),
+          backgroundColor: theme.primaryColorLight,
         endDrawer: Drawer(
-          backgroundColor: Color(0xFF423A3A).withOpacity(0.80),
+          backgroundColor: theme.primaryColorDark.withOpacity(0.60),
           child: ListView(
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Color(0xFF423A3A),
+                  color: theme.primaryColorDark,
                 ),
                 margin: EdgeInsets.all(0),
                 child: Column(
@@ -188,20 +201,17 @@ class _MainWrapperState extends State<MainWrapper> {
           ),
         ),
         appBar: AppBar(
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
+          title: Text(getAppbarTitle()),
           bottom: isProcessing ? PreferredSize(
               preferredSize: Size(double.infinity, 1.0),
-              child: LinearProgressIndicator(backgroundColor: Color(0xFF459A7C))
+              child: LinearProgressIndicator(backgroundColor: theme.colorScheme.secondary)
           ) : null,
         ),
         bottomNavigationBar: BottomNavigationBar(
-          selectedIconTheme: IconThemeData(
-            color: Colors.black
-          ),
+          elevation: 4,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: Color(0xFF459A7C),
+          backgroundColor: theme.primaryColorDark,
+          selectedItemColor: Colors.white,
           unselectedItemColor: Colors.black.withOpacity(.50),
           selectedFontSize: 14,
           unselectedFontSize: 14,

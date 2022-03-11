@@ -17,11 +17,12 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Color(0xFFF2E7E7),
+      backgroundColor: theme.primaryColorLight,
       appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        title: Text('History Page'),
       ),
       body: DailyTallyPage(bloc: widget.bloc, data: widget.data, isAll: true),
     );

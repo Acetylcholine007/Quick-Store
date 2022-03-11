@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:quick_store/shared/decorations.dart';
 
 class FieldLabel extends StatelessWidget {
   final String label;
   final Widget child;
-  const FieldLabel({Key key, this.label, this.child}) : super(key: key);
+  final bool sunken;
+  const FieldLabel({Key key, this.label, this.child, this.sunken = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,9 @@ class FieldLabel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(label, style: theme.textTheme.bodyText1),
-          child
+          Container(
+              decoration: sunken ? fieldContainerDecoration : null,
+              child: child)
         ],
       ),
     );

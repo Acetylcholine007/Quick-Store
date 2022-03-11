@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quick_store/models/LoginResponse.dart';
 import 'package:quick_store/services/LocalDatabaseService.dart';
-import 'package:quick_store/services/NotificationService.dart';
+import 'package:quick_store/shared/decorations.dart';
 import 'package:quick_store/wrappers/AuthWrapper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,7 +22,7 @@ class _FrontPageState extends State<FrontPage> {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
       ),
-      backgroundColor: Color(0xFFF2E7E7),
+      backgroundColor: theme.primaryColorLight,
       body: Container(
         padding: const EdgeInsets.all(24),
         child: Center(
@@ -34,7 +34,7 @@ class _FrontPageState extends State<FrontPage> {
                 children: [
                   Image.asset('assets/images/appLogo.png', width: 150, height: 150),
                   Text('QUICK STORE', style: theme.textTheme.headline4.copyWith(color: Colors.black, fontWeight: FontWeight.w700)),
-                  Text('INVENTORY', style: theme.textTheme.bodyText1.copyWith(color: Color(0xFF459A7C), fontWeight: FontWeight.w700))
+                  Text('INVENTORY', style: theme.textTheme.bodyText1.copyWith(color: theme.primaryColorDark, fontWeight: FontWeight.w700))
                 ],
               ),
               ElevatedButton(
@@ -58,19 +58,7 @@ class _FrontPageState extends State<FrontPage> {
                   }
                 },
                 child: Text('Get Started'),
-                  style: ButtonStyle(
-                    textStyle: MaterialStateProperty.all(TextStyle(
-                      fontSize: 24
-                    )),
-                    padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8, horizontal: 20)),
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                    backgroundColor: MaterialStateProperty.all(Color(0xFF459A7C)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
-                          )
-                      )
-                  )
+                  style: appButtonDecoration
               )
             ],
           ),

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HelpPage extends StatefulWidget {
@@ -14,10 +13,9 @@ class _HelpPageState extends State<HelpPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Color(0xFFF2E7E7),
+      backgroundColor: theme.primaryColorLight,
       appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        title: Text('Help Page'),
       ),
       body: Container(
         padding: EdgeInsets.all(16),

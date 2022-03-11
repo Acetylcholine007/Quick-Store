@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quick_store/components/SummaryTab.dart';
 import 'package:quick_store/models/ProductItem.dart';
+import 'package:quick_store/shared/decorations.dart';
 
 import 'CellItem.dart';
 
@@ -69,8 +70,8 @@ class Receipt extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(onPressed: abortHandler, child: Text('CANCEL')),
-            ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM')),
+            ElevatedButton(onPressed: abortHandler, child: Text('CANCEL'), style: formButtonDecoration),
+            ElevatedButton(onPressed: orderHandler, child: Text('CONFIRM'), style: formButtonDecoration),
           ],
         )
       ],

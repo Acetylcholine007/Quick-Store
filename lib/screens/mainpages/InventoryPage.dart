@@ -73,9 +73,9 @@ class _InventoryPageState extends State<InventoryPage> {
     final products = sortProducts(filterProductHandler(widget.data.products));
 
     return Scaffold(
-      backgroundColor: Color(0xFFF2E7E7),
+      backgroundColor: theme.primaryColorLight,
       body: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -94,7 +94,7 @@ class _InventoryPageState extends State<InventoryPage> {
                   flex: 4,
                   child: DropdownButtonFormField(
                     value: productState,
-                    decoration: dropdownDecoration,
+                    decoration: dropdownDecoration.copyWith(fillColor: theme.backgroundColor),
                     items: ['All', 'Soon to expire', 'Expired', 'Out of Stock'].asMap().entries.map((filter) => DropdownMenuItem(
                       value: filter.key,
                       child: Text(filter.value, overflow: TextOverflow.ellipsis),
@@ -105,17 +105,20 @@ class _InventoryPageState extends State<InventoryPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8,  20, 16),
-              child: TextFormField(
-                controller: controller,
-                decoration: searchFieldDecoration.copyWith(
-                  suffixIcon: query == '' ? Icon(Icons.search_rounded) :
-                  IconButton(onPressed: () {
-                    controller.text = "";
-                    setState(() => query = "");
-                  }, icon: Icon(Icons.highlight_off_rounded))
+              padding: const EdgeInsets.fromLTRB(0, 16,  0, 16),
+              child: Container(
+                decoration: fieldContainerDecoration,
+                child: TextFormField(
+                  controller: controller,
+                  decoration: searchFieldDecoration.copyWith(
+                    suffixIcon: query == '' ? Icon(Icons.search_rounded) :
+                    IconButton(onPressed: () {
+                      controller.text = "";
+                      setState(() => query = "");
+                    }, icon: Icon(Icons.highlight_off_rounded))
+                  ),
+                  onChanged: (val) => setState(() => query = val),
                 ),
-                onChanged: (val) => setState(() => query = val),
               ),
             ),
             Expanded(

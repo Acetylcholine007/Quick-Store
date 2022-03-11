@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 InputDecoration formFieldDecoration = InputDecoration(
-    filled: true,
     isDense: true,
     border: OutlineInputBorder(
       borderSide: BorderSide.none,
@@ -11,7 +10,6 @@ InputDecoration formFieldDecoration = InputDecoration(
 );
 
 InputDecoration searchFieldDecoration = InputDecoration(
-    filled: true,
     isDense: true,
     border: OutlineInputBorder(
       borderSide: BorderSide.none,
@@ -22,13 +20,14 @@ InputDecoration searchFieldDecoration = InputDecoration(
 );
 
 InputDecoration dropdownDecoration = InputDecoration(
+  contentPadding: EdgeInsets.all(10),
   filled: true,
   isDense: true,
   border: OutlineInputBorder(
     borderSide: BorderSide.none,
     borderRadius: BorderRadius.circular(100),
   ),
-  fillColor: Colors.white,
+  // fillColor: Colors.white,
   hintText: 'Search',
 );
 
@@ -37,12 +36,43 @@ BoxDecoration labelFieldDecoration = BoxDecoration(
   borderRadius: BorderRadius.circular(10)
 );
 
+ShapeDecoration fieldContainerDecoration = ShapeDecoration(
+  gradient: LinearGradient(
+    colors: [Color(0xFFe6dfd8), Color(0xFFf7f5ec)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.0, 0.4],
+    tileMode: TileMode.clamp,
+  ),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  ),
+);
+
 ButtonStyle formButtonDecoration = ButtonStyle(
-  backgroundColor: MaterialStateProperty.all(Colors.white),
-  foregroundColor: MaterialStateProperty.all(Color(0xFF459A7C)),
-  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+    elevation: MaterialStateProperty.all(6),
+    textStyle: MaterialStateProperty.all(TextStyle(
+      fontSize: 20
+    )),
+    padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8, horizontal: 20)),
+    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       )
-  )
+    )
+);
+
+ButtonStyle appButtonDecoration = ButtonStyle(
+    elevation: MaterialStateProperty.all(6),
+    textStyle: MaterialStateProperty.all(TextStyle(
+        fontSize: 24
+    )),
+    padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8, horizontal: 20)),
+    // foregroundColor: MaterialStateProperty.all(Colors.white),
+    // backgroundColor: MaterialStateProperty.all(Color(0xFF459A7C)),
+    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        )
+    )
 );

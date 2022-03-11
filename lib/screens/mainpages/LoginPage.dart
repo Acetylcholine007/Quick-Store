@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: Color(0xFFF2E7E7),
+        backgroundColor: theme.primaryColorLight,
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.transparent,
@@ -114,12 +114,12 @@ class _LoginPageState extends State<LoginPage> {
                             obscureText: hidePassword,
                           ),
                         ),
-                        SizedBox(height: 50),
+                        SizedBox(height: 40),
                         ElevatedButton(onPressed: loginHandler, child: Text('LOG IN'), style: formButtonDecoration)
                       ],
                     ),
                   ),
-                  SizedBox(height: 80),
+                  SizedBox(height: 40),
                   RichText(
                     text: TextSpan(
                       text: 'DO NOT HAVE AN ACCOUNT? ',
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextSpan(
                           text: 'SIGN UP HERE',
-                          style: theme.textTheme.bodyText1.copyWith(color: Color(0xFF459A7C), decoration: TextDecoration.underline),
+                          style: theme.textTheme.bodyText1.copyWith(color: theme.primaryColorDark, decoration: TextDecoration.underline),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                             Navigator.push(
@@ -137,7 +137,6 @@ class _LoginPageState extends State<LoginPage> {
                             }),
                           ]
                         )
-
                   ),
                 ],
               ),

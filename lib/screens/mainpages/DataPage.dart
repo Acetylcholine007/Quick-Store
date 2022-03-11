@@ -25,13 +25,12 @@ class _DataPageState extends State<DataPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Color(0xFFF2E7E7),
+      backgroundColor: theme.primaryColorLight,
       appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        title: Text('Data Management'),
         bottom: isLoading ? PreferredSize(
             preferredSize: Size(double.infinity, 1.0),
-            child: LinearProgressIndicator(backgroundColor: Color(0xFF459A7C))
+            child: LinearProgressIndicator(backgroundColor: theme.colorScheme.secondary)
         ) : null,
       ),
       body: Container(

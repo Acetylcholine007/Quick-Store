@@ -53,11 +53,7 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
     return Container(
       padding: EdgeInsets.all(16),
       child: Column(
-        children: (widget.isAll ? <Widget>[] : <Widget>[
-          Expanded(
-            flex: 1,
-            child: Text('Daily Tally', style: theme.textTheme.headline6)
-        )]) + <Widget>[
+        children: <Widget>[
           Expanded(
               flex: 1,
               child: Row(
@@ -115,17 +111,6 @@ class _DailyTallyPageState extends State<DailyTallyPage> {
               initialDate: getDateTime(),
               firstDate: DateTime(2000),
               lastDate: DateTime.now(),
-              builder: (BuildContext context, Widget child) {
-                return Theme(
-                  data: ThemeData.light().copyWith(
-                    colorScheme: ColorScheme.light(primary: Color(0xFF459A7C)),
-                    buttonTheme: ButtonThemeData(
-                        textTheme: ButtonTextTheme.primary
-                    ),
-                  ),
-                  child: child,
-                );
-              }
           )
               .then((pickedDate) {
             if (pickedDate == null) {

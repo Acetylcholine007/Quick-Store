@@ -32,7 +32,7 @@ class ProductTile extends StatelessWidget {
         showBadge: product.expiration != 'None' && (product.isAboutToExpire() || product.isExpired()),
         position: BadgePosition.topEnd(top: 5, end: 5),
         child: Card(
-          elevation: 4,
+          elevation: 6,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
@@ -86,7 +86,7 @@ class ProductTile extends StatelessWidget {
               ],
             ),
             decoration: BoxDecoration(
-            color: Color(0xFFC4C4C4),
+            color: theme.backgroundColor,
             borderRadius: BorderRadius.circular(15)),
           ),
         ),

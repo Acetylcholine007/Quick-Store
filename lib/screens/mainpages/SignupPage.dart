@@ -87,7 +87,7 @@ class _SignupPageState extends State<SignupPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        backgroundColor: Color(0xFFF2E7E7),
+        backgroundColor: theme.primaryColorLight,
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.transparent,
