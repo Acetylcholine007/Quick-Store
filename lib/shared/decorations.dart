@@ -21,6 +21,17 @@ InputDecoration searchFieldDecoration = InputDecoration(
     hintText: 'Search',
 );
 
+InputDecoration dropdownDecoration = InputDecoration(
+  filled: true,
+  isDense: true,
+  border: OutlineInputBorder(
+    borderSide: BorderSide.none,
+    borderRadius: BorderRadius.circular(100),
+  ),
+  fillColor: Colors.white,
+  hintText: 'Search',
+);
+
 BoxDecoration labelFieldDecoration = BoxDecoration(
   color: Colors.white,
   borderRadius: BorderRadius.circular(10)

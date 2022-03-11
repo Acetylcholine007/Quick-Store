@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:quick_store/screens/mainpages/FrontPage.dart';
+import 'package:quick_store/services/NotificationService.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

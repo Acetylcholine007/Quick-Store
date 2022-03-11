@@ -5,6 +5,7 @@ import 'package:quick_store/BLoCs/StoreBloc.dart';
 import 'package:quick_store/components/FieldLabel.dart';
 import 'package:quick_store/models/Product.dart';
 import 'package:quick_store/services/DataService.dart';
+import 'package:quick_store/services/NotificationService.dart';
 import 'package:quick_store/shared/decorations.dart';
 import 'package:uuid/uuid.dart';
 
@@ -44,6 +45,27 @@ class _ItemEditorState extends State<ItemEditor> {
               onPressed: () =>
                   ScaffoldMessenger.of(context).hideCurrentSnackBar()),
         );
+
+        if(product.expiration != 'None') {
+          NotificationService.showScheduledNotification(
+            id: product.pid.hashCode,
+            title: 'QuickStore Expiration Notice',
+            body: '${product.name} will reach expiration date in one week.',
+            payload: product.pid,
+            scheduleDate: getDateTime(product.expiration).subtract(Duration(days: 7))
+          );
+          NotificationService.showScheduledNotification(
+            id: product.pid.hashCode + 1,
+            title: 'QuickStore Expiration Notice',
+            body: '${product.name} reached expiration date.',
+            payload: product.pid,
+            scheduleDate: getDateTime(product.expiration)
+          );
+        } else {
+          NotificationService.cancel(product.pid.hashCode);
+          NotificationService.cancel(product.pid.hashCode + 1);
+        }
+
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
@@ -96,6 +118,11 @@ class _ItemEditorState extends State<ItemEditor> {
           content: Text('Product deleted'),
           action: SnackBarAction(label: 'OK', onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
         );
+        if(product.expiration != 'None') {
+          NotificationService.cancel(product.pid.hashCode);
+          NotificationService.cancel(product.pid.hashCode + 1);
+        }
+
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {

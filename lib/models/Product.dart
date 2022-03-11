@@ -49,6 +49,11 @@ class Product {
     return this.expiration != 'None' && getDateTime(this.expiration).isBefore(DateTime.now());
   }
 
+  bool isAboutToExpire() {
+    return this.expiration != 'None' && getDateTime(this.expiration).isAfter(DateTime.now().subtract(Duration(days: 7)))
+    && getDateTime(this.expiration).isAfter(DateTime.now());
+  }
+
   OrderItem toOrderItem() {
     return OrderItem(pid: this.pid, name: this.name, quantity: 1, sellingPrice: this.sellingPrice, originalPrice: this.originalPrice);
   }

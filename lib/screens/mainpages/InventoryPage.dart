@@ -5,6 +5,7 @@ import 'package:quick_store/components/ProductTile.dart';
 import 'package:quick_store/models/LocalDBDataPack.dart';
 import 'package:quick_store/models/Product.dart';
 import 'package:quick_store/screens/subpages/ItemEditor.dart';
+import 'package:quick_store/services/NotificationService.dart';
 import 'package:quick_store/shared/decorations.dart';
 
 class InventoryPage extends StatefulWidget {
@@ -20,11 +21,15 @@ class InventoryPage extends StatefulWidget {
 class _InventoryPageState extends State<InventoryPage> {
   String query = '';
   TextEditingController controller = TextEditingController();
-  int productState = 1;
+  int productState = 0;
   
   List<Product> filterProductHandler(List<Product> products) {
     if(productState == 2) {
       products = products.where((product) => product.isExpired()).toList();
+    } else if(productState == 1) {
+      products = products.where((product) => product.isAboutToExpire()).toList();
+    } else if(productState == 3) {
+      products = products.where((product) => product.quantity == 0).toList();
     }
 
     if(query == '') {
@@ -42,7 +47,26 @@ class _InventoryPageState extends State<InventoryPage> {
     });
     return products;
   }
-  
+
+  void onClickedNotification(String payload) {
+    try {
+      Product product = widget.data.products.singleWhere((element) => element.pid == payload);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ItemEditor(isNew: false, bloc: widget.bloc, product: product)),
+      );
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationService.onNotifications.stream.listen(onClickedNotification);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -58,26 +82,25 @@ class _InventoryPageState extends State<InventoryPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'INVENTORY',
-                  textAlign: TextAlign.left,
-                  style: theme.textTheme.headline4.copyWith(color: Colors.black)
+                Expanded(
+                  flex: 5,
+                  child: Text(
+                    'INVENTORY',
+                    textAlign: TextAlign.left,
+                    style: theme.textTheme.headline4.copyWith(color: Colors.black)
+                  ),
                 ),
-                Row(
-                  children: [
-                    Row(
-                      children: [
-                        Radio(value: 1, groupValue: productState, onChanged: (value) {setState(() {productState = value;});}),
-                        Text('All')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio(value: 2, groupValue: productState, onChanged: (value) {setState(() {productState = value;});}),
-                        Text('Expired')
-                      ],
-                    ),
-                  ],
+                Expanded(
+                  flex: 4,
+                  child: DropdownButtonFormField(
+                    value: productState,
+                    decoration: dropdownDecoration,
+                    items: ['All', 'Soon to expire', 'Expired', 'Out of Stock'].asMap().entries.map((filter) => DropdownMenuItem(
+                      value: filter.key,
+                      child: Text(filter.value, overflow: TextOverflow.ellipsis),
+                    )).toList(),
+                    onChanged: (value) => setState(() => productState = value),
+                  ),
                 )
               ],
             ),
@@ -121,11 +144,23 @@ class _InventoryPageState extends State<InventoryPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
+        // onPressed: () =>
+            // NotificationService.showNotification(
+            //     title: 'Candy',
+            //     body: 'Candy is about to expired',
+            //     payload: 'Candy Id'
+            // )
+        // NotificationService.showScheduledNotification(
+        //   title: 'Candy',
+        //   body: 'Candy is about to expired',
+        //   payload: 'Candy Id',
+        //   scheduleDate: DateTime.now().add(Duration(seconds: 10))
+        // )
         onPressed: () =>
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ItemEditor(isNew: true, bloc: widget.bloc)),
-            ),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ItemEditor(isNew: true, bloc: widget.bloc)),
+          ),
       ),
     );
   }

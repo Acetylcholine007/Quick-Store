@@ -19,16 +19,17 @@ class ProductTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Badge(
-      badgeContent: Text('Out of Stock', style: TextStyle(color: Colors.white)),
+      badgeContent: Text('Out of\nStock', style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
       shape: BadgeShape.square,
       borderRadius: BorderRadius.circular(15),
       showBadge: product.quantity == 0,
       position: BadgePosition.topStart(top: 5, start: 5),
       child: Badge(
-        badgeContent: Text('Expired', style: TextStyle(color: Colors.white)),
+        badgeColor: product.isAboutToExpire() ? Colors.deepOrangeAccent : Colors.red,
+        badgeContent: Text(product.isAboutToExpire() ? 'Soon to\nExpire' : 'Expired', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
         shape: BadgeShape.square,
         borderRadius: BorderRadius.circular(15),
-        showBadge: product.expiration != 'None' && getDateTime(product.expiration).isBefore(DateTime.now()),
+        showBadge: product.expiration != 'None' && (product.isAboutToExpire() || product.isExpired()),
         position: BadgePosition.topEnd(top: 5, end: 5),
         child: Card(
           elevation: 4,
