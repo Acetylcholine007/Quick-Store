@@ -50,9 +50,9 @@ class _ItemEditorState extends State<ItemEditor> {
           NotificationService.showScheduledNotification(
             id: product.pid.hashCode,
             title: 'QuickStore Expiration Notice',
-            body: '${product.name} will reach expiration date in one week.',
+            body: '${product.name} will reach expiration date in three days.',
             payload: product.pid,
-            scheduleDate: getDateTime(product.expiration).subtract(Duration(days: 7))
+            scheduleDate: getDateTime(product.expiration).subtract(Duration(days: 3))
           );
           NotificationService.showScheduledNotification(
             id: product.pid.hashCode + 1,

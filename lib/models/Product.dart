@@ -50,7 +50,7 @@ class Product {
   }
 
   bool isAboutToExpire() {
-    return this.expiration != 'None' && getDateTime(this.expiration).isAfter(DateTime.now().subtract(Duration(days: 7)))
+    return this.expiration != 'None' && getDateTime(this.expiration).isAfter(DateTime.now().subtract(Duration(days: 3)))
     && getDateTime(this.expiration).isAfter(DateTime.now());
   }
 
