@@ -24,6 +24,9 @@ class _FrontPageState extends State<FrontPage> {
       ),
       backgroundColor: Colors.white,
       body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: new AssetImage("assets/images/background.png"), fit: BoxFit.cover,),
+        ),
         padding: const EdgeInsets.all(24),
         child: Center(
           child: Column(
@@ -59,6 +62,9 @@ class _FrontPageState extends State<FrontPage> {
                 },
                 child: Text('Get Started'),
                   style: appButtonDecoration
+              ),
+              SizedBox(
+                height: 80,
               )
             ],
           ),
