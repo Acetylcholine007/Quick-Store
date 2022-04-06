@@ -141,7 +141,6 @@ class _MainWrapperState extends State<MainWrapper> {
                     ),
                     SizedBox(height: 20),
                     Text(widget.account.username, style: theme.textTheme.headline6.copyWith(color: Colors.white)),
-                    Text(widget.account.contact, style: theme.textTheme.headline6.copyWith(color: Colors.white))
                   ],
                 ),
               ),

@@ -26,7 +26,7 @@ class LocalDatabaseService {
               'CREATE TABLE products(pid TEXT PRIMARY KEY, name TEXT, sellingPrice REAL, quantity INTEGER, expiration TEXT, originalPrice REAL )'
           );
           batch.execute('CREATE TABLE orders(oid TEXT PRIMARY KEY, datetime TEXT, itemString TEXT, username TEXT)');
-          batch.execute('CREATE TABLE users(uid TEXT PRIMARY KEY, username TEXT, password TEXT, contact TEXT )');
+          batch.execute('CREATE TABLE users(uid TEXT PRIMARY KEY, username TEXT)');
           return batch.commit();
         },
         version: 1
@@ -210,17 +210,17 @@ class LocalDatabaseService {
     return count != 0;
   }
 
-  Future<LoginResponse> login(String username, String password) async {
+  Future<LoginResponse> login(String username) async {
     Database db = await database;
     List<Map<String, Object>> maps = await db.query(
         'users',
-        where: 'username = ? AND password = ?',
-        whereArgs: [username, password],
+        where: 'username = ?',
+        whereArgs: [username],
         limit: 1
     );
 
     if(maps == null || maps.isEmpty)
-      return LoginResponse(null, 'Incorrect Credentials');
+      return LoginResponse(null, 'Incorrect Username');
 
     return LoginResponse(Account.fromLocalDB(maps[0]), 'SUCCESS');
   }

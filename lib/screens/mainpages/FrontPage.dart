@@ -44,10 +44,9 @@ class _FrontPageState extends State<FrontPage> {
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   String username = prefs.getString('username') ?? '';
-                  String password = prefs.getString('password') ?? '';
 
-                  if(username != '' && password != '') {
-                    LoginResponse response = await LocalDatabaseService.db.login(username, password);
+                  if(username != '') {
+                    LoginResponse response = await LocalDatabaseService.db.login(username);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => AuthWrapper(

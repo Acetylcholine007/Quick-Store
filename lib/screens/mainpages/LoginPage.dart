@@ -18,16 +18,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String username = '';
-  String password = '';
-  bool hidePassword = true;
 
   void loginHandler() async {
     if (_formKey.currentState.validate()) {
-      LoginResponse response = await LocalDatabaseService.db.login(username, password);
+      LoginResponse response = await LocalDatabaseService.db.login(username);
       if(response.account != null && response.message == 'SUCCESS') {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('username', response.account.username);
-        await prefs.setString('password', response.account.password);
         widget.setAccount(response.account);
       } else {
         showDialog(
@@ -98,23 +95,6 @@ class _LoginPageState extends State<LoginPage> {
                               formFieldDecoration.copyWith(hintText: 'Username'),
                               validator: (val) => val.isEmpty ? 'Enter Username' : null,
                               onChanged: (val) => setState(() => username = val)
-                          ),
-                        ),
-                        FieldLabel(
-                          label: 'PASSWORD',
-                          child: TextFormField(
-                            initialValue: password,
-                            decoration:
-                            formFieldDecoration.copyWith(
-                              hintText: 'Password',
-                              suffixIcon: IconButton(
-                                  onPressed: () => setState(() => hidePassword = !hidePassword),
-                                  icon: Icon(Icons.visibility)
-                              )
-                            ),
-                            validator: (val) => val.isEmpty ? 'Enter Password' : null,
-                            onChanged: (val) => setState(() => password = val),
-                            obscureText: hidePassword,
                           ),
                         ),
                         SizedBox(height: 40),
