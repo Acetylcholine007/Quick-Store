@@ -46,12 +46,15 @@ class Product {
   }
 
   bool isExpired() {
-    return this.expiration != 'None' && getDateTime(this.expiration).isBefore(DateTime.now());
+    // return this.expiration != 'None' && getDateTime(this.expiration).isBefore(DateTime.now());
+    return this.expiration != 'None' && DateTime.now().isAfter(getDateTime(this.expiration));
   }
 
   bool isAboutToExpire() {
-    return this.expiration != 'None' && getDateTime(this.expiration).isAfter(DateTime.now().subtract(Duration(days: 3)))
-    && getDateTime(this.expiration).isAfter(DateTime.now());
+    // return this.expiration != 'None' && getDateTime(this.expiration).subtract(Duration(days: 3)).isAfter(DateTime.now())
+    // && getDateTime(this.expiration).isBefore(DateTime.now());
+    return this.expiration != 'None' && DateTime.now().isAfter(getDateTime(this.expiration).subtract(Duration(days: 3)))
+        && DateTime.now().isBefore(getDateTime(this.expiration));
   }
 
   OrderItem toOrderItem() {
